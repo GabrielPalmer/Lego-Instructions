@@ -1,5 +1,5 @@
 //
-//  ViewController.swift
+//  InstructionsViewController.swift
 //  Lego Instructions
 //
 //  Created by Gabriel Blaine Palmer on 2/4/19.
@@ -7,14 +7,13 @@
 //
 
 import UIKit
+import PDFKit
 
-class ViewController: UIViewController {
+class InstructionsViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
+
     }
-
-
+    
 }
-
