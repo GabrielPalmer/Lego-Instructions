@@ -11,15 +11,19 @@ import Foundation
 class LegoSet {
     let name: String
     let year: String
+    let theme: String
     let partCount: String
     let id: String
     let imageURL: String
+    let rating: String
     
-    init(attributeDict: [String : String]) {
-        name = "bob the builder"
-        year = "1990"
-        partCount = "666"
-        id = "12345"
-        imageURL = "blarrrrrg"
+    init(_ legoSetDict: [String : String]) {
+        self.name = legoSetDict["name"]!
+        self.year = legoSetDict["year"]!
+        self.theme = legoSetDict["theme"]!
+        self.partCount = legoSetDict["partCount"]!
+        self.id = legoSetDict["id"]!
+        self.imageURL = legoSetDict["imageURL"]!
+        self.rating = legoSetDict["rating"]!
     }
 }

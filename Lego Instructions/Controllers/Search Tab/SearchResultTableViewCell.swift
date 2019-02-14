@@ -12,13 +12,9 @@ class SearchResultTableViewCell: UITableViewCell {
 
     @IBOutlet weak var legoSetImageView: UIImageView!
     @IBOutlet weak var nameLabel: UILabel!
+    @IBOutlet weak var themeLabel: UILabel!
     @IBOutlet weak var numberLabel: UILabel!
     @IBOutlet weak var partsLabel: UILabel!
+    @IBOutlet weak var instructionsButton: UIButton!
     
-    func setUpCell(legoSet: LegoSet) {
-        nameLabel.text = "\(legoSet.name) (\(legoSet.year))"
-        numberLabel.text = legoSet.id
-        partsLabel.text = "\(legoSet.partCount) Pieces"
-    }
-
 }
