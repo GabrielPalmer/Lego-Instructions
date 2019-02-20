@@ -189,7 +189,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="834" height="1194"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Qg5-06-e9U">
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Qg5-06-e9U" userLabel="Header View">
                                 <rect key="frame" x="0.0" y="0.0" width="834" height="136"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Set Name" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="cyd-e6-BDa">
@@ -198,8 +198,8 @@
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
                                     </label>
-                                    <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" spacing="5" translatesAutoresizingMaskIntoConstraints="NO" id="0OA-cX-rdq">
-                                        <rect key="frame" x="0.0" y="76" width="834" height="60"/>
+                                    <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" spacing="7" translatesAutoresizingMaskIntoConstraints="NO" id="0OA-cX-rdq">
+                                        <rect key="frame" x="7" y="76" width="820" height="60"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="60" id="Brj-Hw-xYR"/>
                                         </constraints>
@@ -213,9 +213,9 @@
                                 <color key="backgroundColor" red="0.95686274509803926" green="0.95686274509803926" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <constraints>
                                     <constraint firstItem="0OA-cX-rdq" firstAttribute="top" secondItem="cyd-e6-BDa" secondAttribute="bottom" constant="15" id="9YS-Zo-zpI"/>
-                                    <constraint firstAttribute="trailing" secondItem="0OA-cX-rdq" secondAttribute="trailing" id="ENd-FO-Z6y"/>
+                                    <constraint firstAttribute="trailing" secondItem="0OA-cX-rdq" secondAttribute="trailing" constant="7" id="ENd-FO-Z6y"/>
                                     <constraint firstAttribute="bottom" secondItem="0OA-cX-rdq" secondAttribute="bottom" id="RI5-MD-Btt"/>
-                                    <constraint firstItem="0OA-cX-rdq" firstAttribute="leading" secondItem="Qg5-06-e9U" secondAttribute="leading" id="Vrd-pK-mUN"/>
+                                    <constraint firstItem="0OA-cX-rdq" firstAttribute="leading" secondItem="Qg5-06-e9U" secondAttribute="leading" constant="7" id="Vrd-pK-mUN"/>
                                     <constraint firstItem="cyd-e6-BDa" firstAttribute="centerX" secondItem="0OA-cX-rdq" secondAttribute="centerX" id="e3v-9z-QDH"/>
                                     <constraint firstAttribute="height" constant="136" id="pnH-Xv-czy"/>
                                 </constraints>
@@ -223,17 +223,35 @@
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="GMv-Ue-Fel">
                                 <rect key="frame" x="0.0" y="136" width="834" height="993"/>
                                 <subviews>
-                                    <label hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Use the search tab to find a LEGO set" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="cEj-vr-rXa">
-                                        <rect key="frame" x="216" y="481.5" width="402" height="30"/>
-                                        <fontDescription key="fontDescription" type="system" pointSize="25"/>
-                                        <nil key="textColor"/>
-                                        <nil key="highlightedColor"/>
-                                    </label>
+                                    <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Qad-T0-1ci" userLabel="Activity View">
+                                        <rect key="frame" x="0.0" y="0.0" width="834" height="993"/>
+                                        <subviews>
+                                            <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" animating="YES" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="wYB-uD-uro">
+                                                <rect key="frame" x="398.5" y="478" width="37" height="37"/>
+                                                <color key="color" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                            </activityIndicatorView>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Use the search tab to find a LEGO set" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="cEj-vr-rXa">
+                                                <rect key="frame" x="216" y="530" width="402" height="30"/>
+                                                <fontDescription key="fontDescription" type="system" pointSize="25"/>
+                                                <nil key="textColor"/>
+                                                <nil key="highlightedColor"/>
+                                            </label>
+                                        </subviews>
+                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <constraints>
+                                            <constraint firstItem="cEj-vr-rXa" firstAttribute="centerX" secondItem="Qad-T0-1ci" secondAttribute="centerX" id="DLA-ji-tXs"/>
+                                            <constraint firstItem="wYB-uD-uro" firstAttribute="centerX" secondItem="Qad-T0-1ci" secondAttribute="centerX" id="DYq-P5-kpF"/>
+                                            <constraint firstItem="wYB-uD-uro" firstAttribute="centerY" secondItem="Qad-T0-1ci" secondAttribute="centerY" id="HJH-66-bcj"/>
+                                            <constraint firstItem="cEj-vr-rXa" firstAttribute="top" secondItem="wYB-uD-uro" secondAttribute="bottom" constant="15" id="I0V-Za-LXu"/>
+                                        </constraints>
+                                    </view>
                                 </subviews>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
-                                    <constraint firstItem="cEj-vr-rXa" firstAttribute="centerY" secondItem="GMv-Ue-Fel" secondAttribute="centerY" id="swT-se-ucZ"/>
-                                    <constraint firstItem="cEj-vr-rXa" firstAttribute="centerX" secondItem="GMv-Ue-Fel" secondAttribute="centerX" id="yU0-st-24s"/>
+                                    <constraint firstAttribute="trailing" secondItem="Qad-T0-1ci" secondAttribute="trailing" id="5oW-Qg-Amb"/>
+                                    <constraint firstItem="Qad-T0-1ci" firstAttribute="top" secondItem="GMv-Ue-Fel" secondAttribute="top" id="7Ro-4i-SWS"/>
+                                    <constraint firstAttribute="bottom" secondItem="Qad-T0-1ci" secondAttribute="bottom" id="WQi-3u-LWn"/>
+                                    <constraint firstItem="Qad-T0-1ci" firstAttribute="leading" secondItem="GMv-Ue-Fel" secondAttribute="leading" id="eaP-HJ-oS6"/>
                                 </constraints>
                             </view>
                         </subviews>
@@ -251,9 +269,11 @@
                     </view>
                     <tabBarItem key="tabBarItem" title="Instructions" image="instructions" selectedImage="instructions" id="3Iq-Bx-OGt"/>
                     <connections>
-                        <outlet property="activityLabel" destination="cEj-vr-rXa" id="ZjA-We-y2G"/>
+                        <outlet property="activityIndicator" destination="wYB-uD-uro" id="X53-KQ-t0G"/>
+                        <outlet property="activityLabel" destination="cEj-vr-rXa" id="2zf-dR-Iiu"/>
+                        <outlet property="activityView" destination="Qad-T0-1ci" id="seB-q2-TAI"/>
                         <outlet property="displayView" destination="GMv-Ue-Fel" id="UBp-4D-xnL"/>
-                        <outlet property="setNameLabel" destination="cyd-e6-BDa" id="TCx-Wb-Xgf"/>
+                        <outlet property="setNameLabel" destination="cyd-e6-BDa" id="Ay2-Vv-MgA"/>
                         <outlet property="tabsStackView" destination="0OA-cX-rdq" id="LKK-qi-BOv"/>
                     </connections>
                 </viewController>

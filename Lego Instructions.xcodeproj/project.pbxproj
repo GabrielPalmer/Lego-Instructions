@@ -19,7 +19,6 @@
 		7420CFDB2208AA6000EA713A /* LegoSetsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7420CFDA2208AA6000EA713A /* LegoSetsController.swift */; };
 		7420CFDD2209D5C700EA713A /* NetworkController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7420CFDC2209D5C700EA713A /* NetworkController.swift */; };
 		7489AE002211CAF50053A586 /* PDFController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7489ADFF2211CAF50053A586 /* PDFController.swift */; };
-		7489AE0222131B6F0053A586 /* PDFTabCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7489AE0122131B6F0053A586 /* PDFTabCollectionViewCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -37,7 +36,6 @@
 		7420CFDA2208AA6000EA713A /* LegoSetsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegoSetsController.swift; sourceTree = "<group>"; };
 		7420CFDC2209D5C700EA713A /* NetworkController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkController.swift; sourceTree = "<group>"; };
 		7489ADFF2211CAF50053A586 /* PDFController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDFController.swift; sourceTree = "<group>"; };
-		7489AE0122131B6F0053A586 /* PDFTabCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDFTabCollectionViewCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -123,7 +121,6 @@
 			children = (
 				7420CFCE220892CC00EA713A /* InstructionsViewController.swift */,
 				7489ADFF2211CAF50053A586 /* PDFController.swift */,
-				7489AE0122131B6F0053A586 /* PDFTabCollectionViewCell.swift */,
 			);
 			path = "Instructions Tab";
 			sourceTree = "<group>";
@@ -204,7 +201,6 @@
 				7420CFD92208A3C200EA713A /* LegoSet.swift in Sources */,
 				7420CFB822088FD600EA713A /* AppDelegate.swift in Sources */,
 				7420CFD72208A36000EA713A /* SearchTableViewController.swift in Sources */,
-				7489AE0222131B6F0053A586 /* PDFTabCollectionViewCell.swift in Sources */,
 				7420CFD222089ACA00EA713A /* SearchResultTableViewCell.swift in Sources */,
 				7420CFD52208A07400EA713A /* ButtonDesign.swift in Sources */,
 				7420CFDB2208AA6000EA713A /* LegoSetsController.swift in Sources */,

@@ -11,17 +11,18 @@ import PDFKit
 
 class InstructionsViewController: UIViewController, PDFViewDelegate {
     
-    @IBOutlet weak var setNameLabel: UILabel!
-    @IBOutlet weak var activityLabel: UILabel!
+    
     @IBOutlet weak var displayView: UIView!
-    
-    @IBOutlet weak var tabsStackView: UIStackView!
-    var tabButtons: [UIButton] = []
-    
     var pdfView: PDFView?
+    @IBOutlet weak var activityView: UIView!
+    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
+    @IBOutlet weak var activityLabel: UILabel!
+    
+    @IBOutlet weak var setNameLabel: UILabel!
+    @IBOutlet weak var tabsStackView: UIStackView!
     
     var pdfURLs: [String] = []
-    var selectedTab: Int = 0
+    var currentTab: Int = 0
     
     var legoSet: LegoSet? {
         didSet {
@@ -37,24 +38,24 @@ class InstructionsViewController: UIViewController, PDFViewDelegate {
         }
     }
     
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         if legoSet == nil {
+            activityIndicator.isHidden = true
             setNameLabel.text = "No Set Selected"
-            activityLabel.isHidden = false
+            displayView.bringSubviewToFront(activityView)
+            activityView.isHidden = false
+            
         } else {
-            activityLabel.isHidden = true
+            activityView.isHidden = true
         }
     }
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
-        
-    }
+    
     
     func setUpTabsStackView() {
         
+        //delete previous tabs if loading from search tab again
         tabsStackView.subviews.forEach({ $0.removeFromSuperview() })
         
         //tab bar won't display if there is only one page
@@ -68,7 +69,7 @@ class InstructionsViewController: UIViewController, PDFViewDelegate {
         let screenWidth = view.bounds.width
         var shouldShortenTabs = false
         
-        let estimatedButtonWidth = (screenWidth / CGFloat(integerLiteral: pdfURLs.count)) - 3.0
+        let estimatedButtonWidth = ((screenWidth - 14.0) / CGFloat(integerLiteral: pdfURLs.count)) - tabsStackView.spacing
         if estimatedButtonWidth <= 100.0 {
             shouldShortenTabs = true
         }
@@ -81,7 +82,6 @@ class InstructionsViewController: UIViewController, PDFViewDelegate {
             button.titleLabel?.font = UIFont(name: "tabButton", size: 23.0)
             button.backgroundColor = #colorLiteral(red: 0.8176259082, green: 0.822451515, blue: 0.8597715736, alpha: 1)
             button.titleLabel?.textColor = UIColor.black
-            
             
             if shouldShortenTabs {
                 button.setTitle("\(tabIndex + 1)", for: .normal)
@@ -96,10 +96,13 @@ class InstructionsViewController: UIViewController, PDFViewDelegate {
         
     }
     
+    
     func switchToTab(_ tab: Int) {
+        currentTab = tab
+        
         for button in tabsStackView.arrangedSubviews {
             if tab != button.tag {
-                button.backgroundColor = #colorLiteral(red: 0.8176259082, green: 0.822451515, blue: 0.8597715736, alpha: 1)
+                button.backgroundColor = #colorLiteral(red: 0.7672145258, green: 0.7784764083, blue: 0.8122620558, alpha: 1)
             } else {
                 button.backgroundColor = #colorLiteral(red: 0.501960814, green: 0.501960814, blue: 0.501960814, alpha: 1)
             }
@@ -109,35 +112,54 @@ class InstructionsViewController: UIViewController, PDFViewDelegate {
             
             let newPDFView = PDFView()
             newPDFView.delegate = self
+            self.pdfView?.autoScales = true
             newPDFView.translatesAutoresizingMaskIntoConstraints = false
-            newPDFView.addSubview(pdfView!)
+            displayView.addSubview(newPDFView)
             
             NSLayoutConstraint.activate([
-                newPDFView.leadingAnchor.constraint(equalTo: displayView.leadingAnchor),
-                newPDFView.trailingAnchor.constraint(equalTo: displayView.trailingAnchor),
-                newPDFView.topAnchor.constraint(equalTo: displayView.topAnchor),
-                newPDFView.bottomAnchor.constraint(equalTo: displayView.bottomAnchor),
+                newPDFView.leadingAnchor.constraint(equalTo: displayView.leadingAnchor, constant: 15.0),
+                newPDFView.trailingAnchor.constraint(equalTo: displayView.trailingAnchor, constant: 15.0),
+                newPDFView.topAnchor.constraint(equalTo: displayView.topAnchor, constant: 15.0),
+                newPDFView.bottomAnchor.constraint(equalTo: displayView.bottomAnchor, constant: 15.0)
                 ])
             
             pdfView = newPDFView
         }
         
-        activityLabel.text = "Loading Instructions for part \(tab + 1)"
-        activityLabel.isHidden = false
+        activityLabel.text = "Loading Instructions For Part \(tab + 1)"
+        activityIndicator.isHidden = false
+        displayView.bringSubviewToFront(activityView)
+        activityView.isHidden = false
         
         DispatchQueue.global(qos: .utility).async {
-            let document = PDFDocument(url: URL(string: self.pdfURLs[tab])!)
+            
+            let url = URL(string: self.pdfURLs[tab])!
+            let document = PDFDocument(url: url)
+            
             DispatchQueue.main.async {
-                self.activityLabel.isHidden = true
-                self.pdfView?.document = document
+                
+                if let document = document {
+                    self.activityView.isHidden = true
+                    self.activityIndicator.isHidden = true
+                    self.pdfView?.document = document
+                    self.displayView.bringSubviewToFront(self.pdfView!)
+                } else {
+                    print("Instructions did not exist for part \(tab) of \(self.setNameLabel.text ?? "")")
+                    self.activityIndicator.isHidden = true
+                    self.activityLabel.text = "There was an error loading this document"
+                }
             }
         }
         
     }
     
+    
     @objc func tabButtonTapped(_ sender: UIButton) {
-        switchToTab(sender.tag)
-        
+        if sender.tag != currentTab {
+            switchToTab(sender.tag)
+        }
     }
+    
+    
     
 }
