@@ -193,7 +193,7 @@
                                 <rect key="frame" x="0.0" y="0.0" width="834" height="136"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Set Name" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="cyd-e6-BDa">
-                                        <rect key="frame" x="364" y="31" width="106" height="30"/>
+                                        <rect key="frame" x="364" y="30" width="106" height="30"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="25"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
@@ -212,11 +212,11 @@
                                 </subviews>
                                 <color key="backgroundColor" red="0.95686274509803926" green="0.95686274509803926" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <constraints>
-                                    <constraint firstItem="0OA-cX-rdq" firstAttribute="top" secondItem="cyd-e6-BDa" secondAttribute="bottom" constant="15" id="9YS-Zo-zpI"/>
                                     <constraint firstAttribute="trailing" secondItem="0OA-cX-rdq" secondAttribute="trailing" constant="7" id="ENd-FO-Z6y"/>
                                     <constraint firstAttribute="bottom" secondItem="0OA-cX-rdq" secondAttribute="bottom" id="RI5-MD-Btt"/>
                                     <constraint firstItem="0OA-cX-rdq" firstAttribute="leading" secondItem="Qg5-06-e9U" secondAttribute="leading" constant="7" id="Vrd-pK-mUN"/>
-                                    <constraint firstItem="cyd-e6-BDa" firstAttribute="centerX" secondItem="0OA-cX-rdq" secondAttribute="centerX" id="e3v-9z-QDH"/>
+                                    <constraint firstItem="cyd-e6-BDa" firstAttribute="centerX" secondItem="Qg5-06-e9U" secondAttribute="centerX" id="ZCD-24-ngv"/>
+                                    <constraint firstItem="cyd-e6-BDa" firstAttribute="top" secondItem="Qg5-06-e9U" secondAttribute="top" constant="30" id="duG-DQ-euT"/>
                                     <constraint firstAttribute="height" constant="136" id="pnH-Xv-czy"/>
                                 </constraints>
                             </view>
@@ -273,6 +273,7 @@
                         <outlet property="activityLabel" destination="cEj-vr-rXa" id="2zf-dR-Iiu"/>
                         <outlet property="activityView" destination="Qad-T0-1ci" id="seB-q2-TAI"/>
                         <outlet property="displayView" destination="GMv-Ue-Fel" id="UBp-4D-xnL"/>
+                        <outlet property="headerHeight" destination="pnH-Xv-czy" id="dey-Ug-ZCt"/>
                         <outlet property="setNameLabel" destination="cyd-e6-BDa" id="Ay2-Vv-MgA"/>
                         <outlet property="tabsStackView" destination="0OA-cX-rdq" id="LKK-qi-BOv"/>
                     </connections>

@@ -18,6 +18,7 @@ class InstructionsViewController: UIViewController, PDFViewDelegate {
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     @IBOutlet weak var activityLabel: UILabel!
     
+    @IBOutlet weak var headerHeight: NSLayoutConstraint!
     @IBOutlet weak var setNameLabel: UILabel!
     @IBOutlet weak var tabsStackView: UIStackView!
     
@@ -61,18 +62,21 @@ class InstructionsViewController: UIViewController, PDFViewDelegate {
         //tab bar won't display if there is only one page
         if pdfURLs.count < 2 {
             tabsStackView.isHidden = true
+            headerHeight.constant = 76
+            switchToTab(0)
             return
         } else {
+            headerHeight.constant = 136
             tabsStackView.isHidden = false
         }
         
         let screenWidth = view.bounds.width
-        var shouldShortenTabs = false
-        
         let estimatedButtonWidth = ((screenWidth - 14.0) / CGFloat(integerLiteral: pdfURLs.count)) - tabsStackView.spacing
-        if estimatedButtonWidth <= 100.0 {
-            shouldShortenTabs = true
-        }
+        
+//        var shouldShortenTabs = false
+//        if estimatedButtonWidth <= 100.0 {
+//            shouldShortenTabs = true
+//        }
         
         for tabIndex in 0...pdfURLs.count - 1 {
             let button = UIButton(frame: CGRect(x: 0, y: 0, width: estimatedButtonWidth, height: 60))
@@ -83,11 +87,11 @@ class InstructionsViewController: UIViewController, PDFViewDelegate {
             button.backgroundColor = #colorLiteral(red: 0.8176259082, green: 0.822451515, blue: 0.8597715736, alpha: 1)
             button.titleLabel?.textColor = UIColor.black
             
-            if shouldShortenTabs {
-                button.setTitle("\(tabIndex + 1)", for: .normal)
-            } else {
-                button.setTitle("Part \(tabIndex + 1)", for: .normal)
-            }
+//            if shouldShortenTabs {
+            button.setTitle("\(tabIndex + 1)", for: .normal)
+//            } else {
+//                button.setTitle("Part \(tabIndex + 1)", for: .normal)
+//            }
             
             tabsStackView.addArrangedSubview(button)
         }
@@ -116,17 +120,26 @@ class InstructionsViewController: UIViewController, PDFViewDelegate {
             newPDFView.translatesAutoresizingMaskIntoConstraints = false
             displayView.addSubview(newPDFView)
             
-            NSLayoutConstraint.activate([
+            newPDFView.addConstraints([
                 newPDFView.leadingAnchor.constraint(equalTo: displayView.leadingAnchor, constant: 15.0),
-                newPDFView.trailingAnchor.constraint(equalTo: displayView.trailingAnchor, constant: 15.0),
+                newPDFView.trailingAnchor.constraint(equalTo: displayView.trailingAnchor, constant: 45.0),
                 newPDFView.topAnchor.constraint(equalTo: displayView.topAnchor, constant: 15.0),
-                newPDFView.bottomAnchor.constraint(equalTo: displayView.bottomAnchor, constant: 15.0)
+                newPDFView.bottomAnchor.constraint(equalTo: displayView.bottomAnchor, constant: 45.0)
                 ])
+            
+            
+            
+//            NSLayoutConstraint.activate([
+//                newPDFView.leadingAnchor.constraint(equalTo: displayView.leadingAnchor, constant: 15.0),
+//                newPDFView.trailingAnchor.constraint(equalTo: displayView.trailingAnchor, constant: 45.0),
+//                newPDFView.topAnchor.constraint(equalTo: displayView.topAnchor, constant: 15.0),
+//                newPDFView.bottomAnchor.constraint(equalTo: displayView.bottomAnchor, constant: 45.0)
+//                ])
             
             pdfView = newPDFView
         }
         
-        activityLabel.text = "Loading Instructions For Part \(tab + 1)"
+        activityLabel.text = "Loading Instructions"
         activityIndicator.isHidden = false
         displayView.bringSubviewToFront(activityView)
         activityView.isHidden = false
@@ -138,15 +151,18 @@ class InstructionsViewController: UIViewController, PDFViewDelegate {
             
             DispatchQueue.main.async {
                 
-                if let document = document {
+                if let document = document, let pdfView = self.pdfView {
                     self.activityView.isHidden = true
                     self.activityIndicator.isHidden = true
                     self.pdfView?.document = document
+                    pdfView.autoScales = true
+                    pdfView.maxScaleFactor = 3.0
+                    pdfView.minScaleFactor = pdfView.scaleFactorForSizeToFit
                     self.displayView.bringSubviewToFront(self.pdfView!)
                 } else {
                     print("Instructions did not exist for part \(tab) of \(self.setNameLabel.text ?? "")")
                     self.activityIndicator.isHidden = true
-                    self.activityLabel.text = "There was an error loading this document"
+                    self.activityLabel.text = "There was an error loading the document"
                 }
             }
         }

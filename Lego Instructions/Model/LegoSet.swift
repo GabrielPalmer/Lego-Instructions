@@ -16,7 +16,7 @@ class LegoSet {
     let id: String
     let imageURL: String
     let rating: String
-    let instructionsCount: String
+    var instructionsCount: String
     
     init(_ legoSetDict: [String : String]) {
         self.name = legoSetDict["name"]!

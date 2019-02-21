@@ -9,18 +9,21 @@
 import Foundation
 
 class PDFController: NSObject, XMLParserDelegate {
+    
     static let shared = PDFController()
     let baseURL = "https://brickset.com/api/v2.asmx/getInstructions?apiKey=B5sG-5uAN-22mW&setID="
     
-    //start with discarding urls with same part description - 1/5, 4/5, ect.
-    
+    var legoSet: LegoSet?
     var allURLs: [String] = []
-    fileprivate var pdfURLs: [String] = []
+    var pdfURLs: [String] = []
+    
+    //xml parser variables
     fileprivate var urlDescriptions: [String] = []
     fileprivate var currentElement: String = ""
     fileprivate var valueWasSet: Bool = false
     
     func fetchInstructionURLs(for legoSet: LegoSet, completion: @escaping ([String]) -> Void) {
+        self.legoSet = legoSet
         pdfURLs.removeAll()
         urlDescriptions.removeAll()
         
@@ -30,9 +33,10 @@ class PDFController: NSObject, XMLParserDelegate {
             xmlParser?.parse()
             
             //example urlDescription: "BI 3005/60 , 60031 V29 1/2"
+            //tests with: "bank" 8461
             
             //pdfURLs will have duplicates removed but keep a copy of the original
-            self.allURLs = self.pdfURLs
+            self.allURLs.append(contentsOf: self.pdfURLs)
             
             if self.pdfURLs.count > 1, (self.pdfURLs.count % 2) == 0 {
                 
@@ -62,7 +66,7 @@ class PDFController: NSObject, XMLParserDelegate {
                 guard let actualInstructions = instructionsFound else {
                     // if it could not determine how many instructions there's supposed to be,
                     // return the first if there's two because the seconds a duplicate, otherwise
-                    // a parsing error occured so return all
+                    // a parsing error probably occured so return all
                     if self.pdfURLs.count == 2 {
                         completion([self.pdfURLs.first!])
                         return
@@ -78,24 +82,27 @@ class PDFController: NSObject, XMLParserDelegate {
                     return
                 }
                 
-                var deletedValueForIndex = false
-                var indexesToDelete: [Int] = []
+                var shouldDeleteDuplicates = false
+                var pdfIndexesToDelete: [Int] = []
                 
-                for index in 1...actualInstructions {
-                    deletedValueForIndex = false
+                for instructionsIndex in 0...actualInstructions - 1 {
+                    shouldDeleteDuplicates = false
                     
-                    self.urlDescriptions.removeAll(where: { (description) -> Bool in
-                        if !deletedValueForIndex && description.contains("\(index)/\(actualInstructions)") {
-                            deletedValueForIndex = true
-                            indexesToDelete.append(index - 1)
-                            return true
-                        } else {
-                            return false
+                    for descriptionIndex in 0...self.urlDescriptions.count - 1 {
+                        let description = self.urlDescriptions[descriptionIndex]
+                        
+                        if description.contains("\(instructionsIndex + 1)/\(actualInstructions)") {
+                            if shouldDeleteDuplicates {
+                                pdfIndexesToDelete.append(descriptionIndex)
+                            } else {
+                                shouldDeleteDuplicates = true
+                            }
                         }
-                    })
+                        
+                    }
                 }
                 
-                self.pdfURLs.remove(at: indexesToDelete)
+                self.pdfURLs.remove(at: pdfIndexesToDelete)
 
             }
             
@@ -121,7 +128,10 @@ class PDFController: NSObject, XMLParserDelegate {
             
             //this description is always associated with duplicate pdfs
             if string == "{No longer listed at LEGO.com}" {
-                pdfURLs.removeLast()
+                allURLs.append(pdfURLs.removeLast())
+                if let legoSet = legoSet, let instructionsCount = Int(legoSet.instructionsCount) {
+                    legoSet.instructionsCount = String(instructionsCount - 1)
+                }
             } else {
                 urlDescriptions.append(string)
             }
