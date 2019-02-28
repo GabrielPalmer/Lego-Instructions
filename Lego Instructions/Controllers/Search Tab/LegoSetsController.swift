@@ -13,7 +13,7 @@ class LegoSetsController: NSObject, XMLParserDelegate {
     static let shared = LegoSetsController()
     let baseURL = URL(string: "https://brickset.com/api/v2.asmx/getSets")!
     
-    var loadedSets: [LegoSet] = []
+    var parsedSets: [LegoSet] = []
     
     fileprivate var currentElement: String = ""
     fileprivate var valueWasSet: Bool = false
@@ -29,7 +29,7 @@ class LegoSetsController: NSObject, XMLParserDelegate {
     ]
     
     func fetchSets(queries: Dictionary<String, String>, completion: @escaping ([LegoSet]) -> Void) {
-        loadedSets.removeAll()
+        parsedSets.removeAll()
         let url = baseURL.withQueries(queries)!
         
         DispatchQueue.global(qos: .utility).async {
@@ -37,7 +37,7 @@ class LegoSetsController: NSObject, XMLParserDelegate {
             xmlParser?.delegate = self
             xmlParser?.parse()
             
-            completion(self.loadedSets)
+            completion(self.parsedSets)
         }
         
     }
@@ -48,8 +48,10 @@ class LegoSetsController: NSObject, XMLParserDelegate {
     }
     
     func parser(_ parser: XMLParser, didEndElement elementName: String, namespaceURI: String?, qualifiedName qName: String?) {
-        if elementName == "sets" && legoSetDict["instructionsCount"]! != "0" {
-            loadedSets.append(LegoSet(legoSetDict))
+        if elementName == "sets" && legoSetDict["instructionsCount"]! != "0" && legoSetDict["theme"]! != "Duplo" {
+            if let legoSet = LegoSet(legoSetDict) {
+                parsedSets.append(legoSet)
+            }
         }
     }
 

@@ -24,6 +24,7 @@ class PDFController: NSObject, XMLParserDelegate {
     
     func fetchInstructionURLs(for legoSet: LegoSet, completion: @escaping ([String]) -> Void) {
         self.legoSet = legoSet
+        allURLs.removeAll()
         pdfURLs.removeAll()
         urlDescriptions.removeAll()
         
@@ -38,6 +39,11 @@ class PDFController: NSObject, XMLParserDelegate {
             //pdfURLs will have duplicates removed but keep a copy of the original
             self.allURLs.append(contentsOf: self.pdfURLs)
             
+            if self.pdfURLs.count == 0 && self.allURLs.count > 0 {
+                completion(self.allURLs)
+                return
+            }
+
             if self.pdfURLs.count > 1, (self.pdfURLs.count % 2) == 0 {
                 
                 guard let expectedInstructions = Int(legoSet.instructionsCount) else {

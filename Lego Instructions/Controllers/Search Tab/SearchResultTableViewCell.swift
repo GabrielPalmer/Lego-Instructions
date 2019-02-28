@@ -16,5 +16,6 @@ class SearchResultTableViewCell: UITableViewCell {
     @IBOutlet weak var numberLabel: UILabel!
     @IBOutlet weak var partsLabel: UILabel!
     @IBOutlet weak var instructionsButton: UIButton!
+    @IBOutlet weak var favoriteButton: UIButton!
     
 }

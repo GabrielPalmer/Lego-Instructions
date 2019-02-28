@@ -8,24 +8,24 @@
 
 import Foundation
 
-class LegoSet {
+class LegoSet: Codable {
     let name: String
-    let year: String
+    let year: Int
     let theme: String
-    let partCount: String
+    let pieces: Int
     let id: String
     let imageURL: String
-    let rating: String
     var instructionsCount: String
     
-    init(_ legoSetDict: [String : String]) {
+    init?(_ legoSetDict: [String : String]) {
         self.name = legoSetDict["name"]!
-        self.year = legoSetDict["year"]!
+        guard let year = Int(legoSetDict["year"]!) else { return nil }
+        self.year = year
         self.theme = legoSetDict["theme"]!
-        self.partCount = legoSetDict["partCount"]!
+        guard let pieces = Int(legoSetDict["partCount"]!) else { return nil }
+        self.pieces = pieces
         self.id = legoSetDict["id"]!
         self.imageURL = legoSetDict["imageURL"]!
-        self.rating = legoSetDict["rating"]!
         self.instructionsCount = legoSetDict["instructionsCount"]!
     }
 }

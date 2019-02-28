@@ -19,12 +19,22 @@ class SearchTableViewController: UIViewController, UITableViewDelegate, UITableV
     @IBOutlet weak var sortButton: UIButton!
     
     var legoSets: [LegoSet] = []
+    var currentSort: SortOption = .name
+    
+    enum SortOption {
+        case name
+        case year
+        case pieces
+        case theme
+        case id
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         view.bringSubviewToFront(loadingView)
         
+        sortButton.titleLabel?.adjustsFontSizeToFitWidth = true
         searchBar.delegate = self
         tableView.delegate = self
         tableView.dataSource = self
@@ -58,12 +68,42 @@ class SearchTableViewController: UIViewController, UITableViewDelegate, UITableV
                     self.loadingView.isHidden = true
                 } else {
                     self.searchingIndicator.isHidden = true
-                    self.activityLabel.text = "No Results Found\n\nSearch on Brickset.com\nfor more accurate results"
+                    self.activityLabel.text = "No Results Found\n\nCheck spelling or try being more specific"
                 }
                 
+                self.sortSets()
                 self.tableView.reloadData()
             }
             
+        }
+    }
+    
+    func sortSets() {
+        guard legoSets.count != 0 else { return }
+        
+        switch currentSort {
+        case .name:
+            legoSets.sort(by: { $0.name < $1.name })
+        case .year:
+            legoSets.sort(by: { $0.year > $1.year })
+        case .pieces:
+            legoSets.sort(by: { $0.pieces > $1.pieces })
+        case .theme:
+            legoSets.sort(by: { $0.theme < $1.theme })
+        case .id:
+            legoSets.sort(by: { $0.id > $1.id })
+        }
+    }
+    
+    func changedSortOption(newSort: SortOption) {
+        if newSort != currentSort {
+            currentSort = newSort
+            
+            guard legoSets.count != 0 else { return }
+            
+            tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: true)
+            sortSets()
+            tableView.reloadData()
         }
     }
     
@@ -81,27 +121,49 @@ class SearchTableViewController: UIViewController, UITableViewDelegate, UITableV
         alertController.addAction(UIAlertAction(
             title: "Name",
             style: .default,
-            handler: nil))
+            handler: { (_) in
+                self.sortButton.setTitle("Name", for: .normal)
+                self.changedSortOption(newSort: .name)
+        }))
         
         alertController.addAction(UIAlertAction(
-            title: "Set Number",
+            title: "Year",
             style: .default,
-            handler: nil))
-        
-        alertController.addAction(UIAlertAction(
-            title: "Rating",
-            style: .default,
-            handler: nil))
+            handler: { (_) in
+                self.sortButton.setTitle("Year", for: .normal)
+                self.changedSortOption(newSort: .year)
+        }))
         
         alertController.addAction(UIAlertAction(
             title: "Pieces",
             style: .default,
-            handler: nil))
+            handler: { (_) in
+                self.sortButton.setTitle("Pieces", for: .normal)
+                self.changedSortOption(newSort: .pieces)
+        }))
+        
+        alertController.addAction(UIAlertAction(
+            title: "Theme",
+            style: .default,
+            handler: { (_) in
+                self.sortButton.setTitle("Theme", for: .normal)
+                self.changedSortOption(newSort: .pieces)
+        }))
+        
+        alertController.addAction(UIAlertAction(
+            title: "Set Number",
+            style: .default,
+            handler: { (_) in
+                self.sortButton.setTitle("Set ID", for: .normal)
+                self.changedSortOption(newSort: .id)
+        }))
 
         present(alertController, animated: true)
         
-        //alertController.popoverPresentationController?.popoverLayoutMargins = view.layoutMargins
+        let sourceRect = CGRect(x: sortButton.bounds.width / 2, y: sortButton.bounds.height, width: 0, height: 0)
         alertController.popoverPresentationController?.sourceView = sortButton
+        alertController.popoverPresentationController?.sourceRect = sourceRect
+        
     }
     
     @objc func getInstructionsButtonTapped(_ sender: UIButton) {
@@ -110,7 +172,12 @@ class SearchTableViewController: UIViewController, UITableViewDelegate, UITableV
             let IVC = viewControllers[1] as? InstructionsViewController {
             
             IVC.loadViewIfNeeded()
-            IVC.legoSet = legoSets[sender.tag]
+            
+            //stops same pdf from being loaded again
+            if IVC.legoSet?.id != legoSets[sender.tag].id {
+                IVC.legoSet = legoSets[sender.tag]
+            }
+            
             tabBar.selectedIndex = 1
         }
         
@@ -134,7 +201,7 @@ class SearchTableViewController: UIViewController, UITableViewDelegate, UITableV
         cell.nameLabel.text = "\(set.name)  (\(set.year))"
         cell.themeLabel.text = set.theme
         cell.numberLabel.text = "ID: \(set.id)"
-        cell.partsLabel.text = "Pieces: \(set.partCount)"
+        cell.partsLabel.text = "Pieces: \(set.pieces)"
         
         cellImage(for: set) { (image) in
             DispatchQueue.main.async {
@@ -158,8 +225,8 @@ class SearchTableViewController: UIViewController, UITableViewDelegate, UITableV
         
     }
     
-    func tableView(_ tableView: UITableView, canFocusRowAt indexPath: IndexPath) -> Bool {
-        return false
+    func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath) -> IndexPath? {
+        return nil
     }
     
 }

@@ -2,11 +2,11 @@
   "images" : [
     {
       "idiom" : "universal",
-      "filename" : "colored_book.png",
       "scale" : "1x"
     },
     {
       "idiom" : "universal",
+      "filename" : "brick_info_icon.png",
       "scale" : "2x"
     },
     {

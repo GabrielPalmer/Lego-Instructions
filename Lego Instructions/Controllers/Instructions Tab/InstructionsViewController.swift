@@ -12,6 +12,7 @@ import PDFKit
 class InstructionsViewController: UIViewController, PDFViewDelegate {
     
     
+    @IBOutlet weak var pdfDisplayView: UIView!
     @IBOutlet weak var displayView: UIView!
     var pdfView: PDFView?
     @IBOutlet weak var activityView: UIView!
@@ -20,6 +21,7 @@ class InstructionsViewController: UIViewController, PDFViewDelegate {
     
     @IBOutlet weak var headerHeight: NSLayoutConstraint!
     @IBOutlet weak var setNameLabel: UILabel!
+    @IBOutlet weak var infoButton: UIButton!
     @IBOutlet weak var tabsStackView: UIStackView!
     
     var pdfURLs: [String] = []
@@ -39,20 +41,26 @@ class InstructionsViewController: UIViewController, PDFViewDelegate {
         }
     }
     
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        self.pdfFitPage()
+    }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         if legoSet == nil {
             activityIndicator.isHidden = true
             setNameLabel.text = "No Set Selected"
+            infoButton.isHidden = true
             displayView.bringSubviewToFront(activityView)
             activityView.isHidden = false
             
         } else {
+            infoButton.isHidden = false
             activityView.isHidden = true
         }
+        
     }
-    
     
     func setUpTabsStackView() {
         
@@ -70,28 +78,27 @@ class InstructionsViewController: UIViewController, PDFViewDelegate {
             tabsStackView.isHidden = false
         }
         
+        guard pdfURLs.count > 0 else {
+            activityLabel.text = "Could not find the any of the instructions listed.\nThis was probably caused by inaccurate info on brickset.com"
+            activityIndicator.isHidden = true
+            displayView.bringSubviewToFront(activityView)
+            activityView.isHidden = false
+            return
+        }
+        
         let screenWidth = view.bounds.width
         let estimatedButtonWidth = ((screenWidth - 14.0) / CGFloat(integerLiteral: pdfURLs.count)) - tabsStackView.spacing
-        
-//        var shouldShortenTabs = false
-//        if estimatedButtonWidth <= 100.0 {
-//            shouldShortenTabs = true
-//        }
         
         for tabIndex in 0...pdfURLs.count - 1 {
             let button = UIButton(frame: CGRect(x: 0, y: 0, width: estimatedButtonWidth, height: 60))
             button.addTarget(self, action: #selector(tabButtonTapped(_:)), for: .touchUpInside)
             
             button.tag = tabIndex
-            button.titleLabel?.font = UIFont(name: "tabButton", size: 23.0)
+            button.titleLabel?.font = UIFont(name: "tabButton", size: 28.0)
             button.backgroundColor = #colorLiteral(red: 0.8176259082, green: 0.822451515, blue: 0.8597715736, alpha: 1)
             button.titleLabel?.textColor = UIColor.black
             
-//            if shouldShortenTabs {
             button.setTitle("\(tabIndex + 1)", for: .normal)
-//            } else {
-//                button.setTitle("Part \(tabIndex + 1)", for: .normal)
-//            }
             
             tabsStackView.addArrangedSubview(button)
         }
@@ -99,7 +106,6 @@ class InstructionsViewController: UIViewController, PDFViewDelegate {
         switchToTab(0)
         
     }
-    
     
     func switchToTab(_ tab: Int) {
         currentTab = tab
@@ -116,25 +122,15 @@ class InstructionsViewController: UIViewController, PDFViewDelegate {
             
             let newPDFView = PDFView()
             newPDFView.delegate = self
-            self.pdfView?.autoScales = true
             newPDFView.translatesAutoresizingMaskIntoConstraints = false
-            displayView.addSubview(newPDFView)
+            pdfDisplayView.addSubview(newPDFView)
             
-            newPDFView.addConstraints([
-                newPDFView.leadingAnchor.constraint(equalTo: displayView.leadingAnchor, constant: 15.0),
-                newPDFView.trailingAnchor.constraint(equalTo: displayView.trailingAnchor, constant: 45.0),
-                newPDFView.topAnchor.constraint(equalTo: displayView.topAnchor, constant: 15.0),
-                newPDFView.bottomAnchor.constraint(equalTo: displayView.bottomAnchor, constant: 45.0)
-                ])
+            let bottom = NSLayoutConstraint(item: newPDFView, attribute: .bottom, relatedBy: .equal, toItem: pdfDisplayView, attribute: .bottom, multiplier: 1, constant: 0)
+            let leading = NSLayoutConstraint(item: newPDFView, attribute: .leading, relatedBy: .equal, toItem: pdfDisplayView, attribute: .leading, multiplier: 1, constant: 0)
+            let top = NSLayoutConstraint(item: newPDFView, attribute: .top, relatedBy: .equal, toItem: pdfDisplayView, attribute: .top, multiplier: 1, constant: 0)
+            let trailing = NSLayoutConstraint(item: newPDFView, attribute: .trailing, relatedBy: .equal, toItem: pdfDisplayView, attribute: .trailing, multiplier: 1, constant: 0)
             
-            
-            
-//            NSLayoutConstraint.activate([
-//                newPDFView.leadingAnchor.constraint(equalTo: displayView.leadingAnchor, constant: 15.0),
-//                newPDFView.trailingAnchor.constraint(equalTo: displayView.trailingAnchor, constant: 45.0),
-//                newPDFView.topAnchor.constraint(equalTo: displayView.topAnchor, constant: 15.0),
-//                newPDFView.bottomAnchor.constraint(equalTo: displayView.bottomAnchor, constant: 45.0)
-//                ])
+            view.addConstraints([leading, trailing, top, bottom])
             
             pdfView = newPDFView
         }
@@ -151,14 +147,11 @@ class InstructionsViewController: UIViewController, PDFViewDelegate {
             
             DispatchQueue.main.async {
                 
-                if let document = document, let pdfView = self.pdfView {
+                if let document = document {
                     self.activityView.isHidden = true
                     self.activityIndicator.isHidden = true
                     self.pdfView?.document = document
-                    pdfView.autoScales = true
-                    pdfView.maxScaleFactor = 3.0
-                    pdfView.minScaleFactor = pdfView.scaleFactorForSizeToFit
-                    self.displayView.bringSubviewToFront(self.pdfView!)
+                    self.displayView.bringSubviewToFront(self.pdfDisplayView)
                 } else {
                     print("Instructions did not exist for part \(tab) of \(self.setNameLabel.text ?? "")")
                     self.activityIndicator.isHidden = true
@@ -169,6 +162,18 @@ class InstructionsViewController: UIViewController, PDFViewDelegate {
         
     }
     
+    func pdfFitPage() {
+        guard let pdf = self.pdfView, let doc = pdf.document, doc.pageCount > 0 else { return }
+        pdf.scaleFactor = pdf.scaleFactorForSizeToFit
+        pdf.minScaleFactor = pdf.scaleFactor
+        pdf.maxScaleFactor = 3
+        pdf.autoScales = true
+        
+    }
+    
+    //========================================
+    // MARK: - Actions
+    //========================================
     
     @objc func tabButtonTapped(_ sender: UIButton) {
         if sender.tag != currentTab {
@@ -176,6 +181,51 @@ class InstructionsViewController: UIViewController, PDFViewDelegate {
         }
     }
     
+    @IBAction func infoButtonTapped(_ sender: Any) {
+        
+        let setInfoView = UIView(frame: CGRect(x: 0, y: 0, width: 200, height: 350))
+        view.addSubview(setInfoView)
+        
+        NSLayoutConstraint.activate([
+            NSLayoutConstraint(item: setInfoView, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .height, multiplier: 1, constant: 350),
+            NSLayoutConstraint(item: setInfoView, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .width, multiplier: 1, constant: 200),
+            NSLayoutConstraint(item: setInfoView, attribute: .centerX, relatedBy: .equal, toItem: infoButton, attribute: .centerX, multiplier: 1, constant: 0),
+            NSLayoutConstraint(item: setInfoView, attribute: .top, relatedBy: .equal, toItem: infoButton, attribute: .bottom, multiplier: 1, constant: 15)
+            ])
+        
+        
+//        let titleLabel = UILabel()
+//        titleLabel.text = "Information About This LEGO Set"
+//
+//        let errorLabel1 = UILabel()
+//        errorLabel1.numberOfLines = 0
+//        errorLabel1.text = "Wrong Instructions?\n Make sure you selected the correct set.\nOtherwise this was probably caused by an inaccurate listing.\nUse the link to find the instructions online."
+//
+//        let button1 = UIButton()
+//        button1.titleLabel?.text = "View on Brickset.com"
+//
+//        let errorLabel2 = UILabel()
+//        errorLabel2.numberOfLines = 0
+//        errorLabel2.text = "Missing Parts or Duplicates in Instructions?\nThe instruction parts are often unordered so try through looking again. Otherwise, when finding the listed parts of instruction for a set, this application automatically removes duplicates, but it isn't perfect and might have made a mistake. This happens expecially when working with older sets."
+//
+//        let button2 = UIButton()
+//        button2.titleLabel?.text = "Show all instructions listed"
+//
+//        let stackView = UIStackView(arrangedSubviews: [titleLabel, errorLabel1, button1, errorLabel2, button2])
+//        stackView.axis = .vertical
+//        stackView.translatesAutoresizingMaskIntoConstraints = false
+//        setInfoView.addSubview(stackView)
+//
+//        stackView.topAnchor.constraint(equalTo: setInfoView.topAnchor, constant: 6)
+//        stackView.bottomAnchor.constraint(equalTo: setInfoView.bottomAnchor, constant: 6)
+//        stackView.leadingAnchor.constraint(equalTo: setInfoView.leadingAnchor, constant: 6)
+//        stackView.trailingAnchor.constraint(equalTo: setInfoView.trailingAnchor, constant: 6)
+        
+        
+        
+        
+        
+    }
     
     
 }
