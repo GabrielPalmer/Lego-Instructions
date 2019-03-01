@@ -262,8 +262,8 @@
                                                 <rect key="frame" x="398.5" y="478" width="37" height="37"/>
                                                 <color key="color" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                             </activityIndicatorView>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Use the search tab to find a LEGO set" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="cEj-vr-rXa">
-                                                <rect key="frame" x="216" y="530" width="402" height="30"/>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Use the search tab to find LEGO sets or build of your favorites" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="cEj-vr-rXa">
+                                                <rect key="frame" x="88" y="530" width="658" height="30"/>
                                                 <fontDescription key="fontDescription" type="system" pointSize="25"/>
                                                 <nil key="textColor"/>
                                                 <nil key="highlightedColor"/>
@@ -303,7 +303,7 @@
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="J4g-7B-EBh"/>
                     </view>
-                    <tabBarItem key="tabBarItem" title="Instructions" image="instructions" selectedImage="instructions" id="3Iq-Bx-OGt"/>
+                    <tabBarItem key="tabBarItem" title="Instructions" image="instructionsTabIcon" selectedImage="instructionsTabIcon" id="3Iq-Bx-OGt"/>
                     <connections>
                         <outlet property="activityIndicator" destination="wYB-uD-uro" id="X53-KQ-t0G"/>
                         <outlet property="activityLabel" destination="cEj-vr-rXa" id="2zf-dR-Iiu"/>
@@ -363,16 +363,10 @@
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="249" verticalHuggingPriority="249" image="imageError" translatesAutoresizingMaskIntoConstraints="NO" id="DXI-al-8qv">
-                                            <rect key="frame" x="97" y="33" width="289" height="153"/>
+                                            <rect key="frame" x="97" y="39" width="297" height="155"/>
                                         </imageView>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Name" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gvN-xl-hOO">
-                                            <rect key="frame" x="97" y="6" width="289" height="21"/>
-                                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                            <nil key="textColor"/>
-                                            <nil key="highlightedColor"/>
-                                        </label>
                                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="hyr-hT-dau" customClass="ViewDesign" customModule="Lego_Instructions" customModuleProvider="target">
-                                            <rect key="frame" x="6" y="48" width="85" height="60"/>
+                                            <rect key="frame" x="6" y="54" width="85" height="60"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Instructions" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="jtH-0d-xUm">
                                                     <rect key="frame" x="0.0" y="0.0" width="85" height="21"/>
@@ -418,14 +412,14 @@
                                             </userDefinedRuntimeAttributes>
                                         </view>
                                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="x4F-DI-1zt" customClass="ButtonDesign" customModule="Lego_Instructions" customModuleProvider="target">
-                                            <rect key="frame" x="6" y="131" width="85" height="40"/>
+                                            <rect key="frame" x="6" y="139" width="85" height="40"/>
                                             <color key="backgroundColor" red="1" green="0.15449517190000001" blue="0.078773848630000004" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="40" id="AL8-BR-4BJ"/>
                                                 <constraint firstAttribute="width" constant="85" id="QvQ-Vq-jKg"/>
                                             </constraints>
                                             <state key="normal" title="Remove">
-                                                <color key="titleColor" red="1" green="0.76755905456825735" blue="0.14099266256157184" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                <color key="titleColor" red="1" green="0.93820134029844549" blue="0.19637472613249263" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                             </state>
                                             <userDefinedRuntimeAttributes>
                                                 <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
@@ -433,38 +427,58 @@
                                                 </userDefinedRuntimeAttribute>
                                             </userDefinedRuntimeAttributes>
                                         </button>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Set ID" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="8dE-jy-HV1">
-                                            <rect key="frame" x="6" y="6" width="85" height="21"/>
+                                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="pOp-LH-rFV" userLabel="Header View">
+                                            <rect key="frame" x="0.0" y="0.0" width="400" height="33"/>
+                                            <subviews>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Set ID" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="8dE-jy-HV1">
+                                                    <rect key="frame" x="6" y="6" width="85" height="21"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="width" constant="85" id="jE2-Cz-9hK"/>
+                                                    </constraints>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Name" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gvN-xl-hOO">
+                                                    <rect key="frame" x="97" y="6" width="287" height="21"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                            </subviews>
+                                            <color key="backgroundColor" red="0.7422734441490948" green="0.7422734441490948" blue="0.7422734441490948" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                             <constraints>
-                                                <constraint firstAttribute="width" constant="85" id="ChY-oc-2Ai"/>
+                                                <constraint firstItem="gvN-xl-hOO" firstAttribute="leading" secondItem="8dE-jy-HV1" secondAttribute="trailing" constant="6" id="4uZ-EJ-mac"/>
+                                                <constraint firstItem="8dE-jy-HV1" firstAttribute="leading" secondItem="pOp-LH-rFV" secondAttribute="leading" constant="6" id="7N2-oD-Kef"/>
+                                                <constraint firstAttribute="bottom" secondItem="8dE-jy-HV1" secondAttribute="bottom" constant="6" id="BrR-vj-Wjq"/>
+                                                <constraint firstAttribute="trailing" secondItem="gvN-xl-hOO" secondAttribute="trailing" constant="16" id="XdZ-EC-mxi"/>
+                                                <constraint firstItem="8dE-jy-HV1" firstAttribute="top" secondItem="pOp-LH-rFV" secondAttribute="top" constant="6" id="axe-nV-XcM"/>
+                                                <constraint firstAttribute="bottom" secondItem="gvN-xl-hOO" secondAttribute="bottom" constant="6" id="f0t-2T-bVm"/>
+                                                <constraint firstItem="gvN-xl-hOO" firstAttribute="top" secondItem="pOp-LH-rFV" secondAttribute="top" constant="6" id="f2E-58-PqR"/>
                                             </constraints>
-                                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                            <nil key="textColor"/>
-                                            <nil key="highlightedColor"/>
-                                        </label>
+                                        </view>
                                     </subviews>
                                 </view>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
-                                    <constraint firstItem="DXI-al-8qv" firstAttribute="top" secondItem="gvN-xl-hOO" secondAttribute="bottom" constant="6" id="3Tz-5g-o6R"/>
+                                    <constraint firstAttribute="trailing" secondItem="DXI-al-8qv" secondAttribute="trailing" constant="6" id="49r-79-wOI"/>
                                     <constraint firstItem="hyr-hT-dau" firstAttribute="top" secondItem="DXI-al-8qv" secondAttribute="top" constant="15" id="BpE-fa-elE"/>
-                                    <constraint firstItem="gvN-xl-hOO" firstAttribute="width" secondItem="DXI-al-8qv" secondAttribute="width" id="DzD-Zt-dqD"/>
                                     <constraint firstItem="DXI-al-8qv" firstAttribute="leading" secondItem="hyr-hT-dau" secondAttribute="trailing" constant="6" id="GF7-6M-9uP"/>
-                                    <constraint firstAttribute="trailingMargin" secondItem="DXI-al-8qv" secondAttribute="trailing" constant="6" id="NgX-Z8-Vj8"/>
+                                    <constraint firstAttribute="bottom" secondItem="DXI-al-8qv" secondAttribute="bottom" constant="6" id="UKx-69-Uhd"/>
                                     <constraint firstItem="x4F-DI-1zt" firstAttribute="leading" secondItem="Zeu-fs-uAQ" secondAttribute="leading" constant="6" id="WDy-G6-a61"/>
-                                    <constraint firstAttribute="bottomMargin" secondItem="DXI-al-8qv" secondAttribute="bottom" constant="6" id="gdF-Gq-yoT"/>
+                                    <constraint firstItem="DXI-al-8qv" firstAttribute="top" secondItem="pOp-LH-rFV" secondAttribute="bottom" constant="6" id="Xr4-cy-EHg"/>
+                                    <constraint firstItem="pOp-LH-rFV" firstAttribute="leading" secondItem="Zeu-fs-uAQ" secondAttribute="leading" id="bf2-D9-c28"/>
+                                    <constraint firstItem="pOp-LH-rFV" firstAttribute="top" secondItem="Zeu-fs-uAQ" secondAttribute="top" id="g0w-cP-clg"/>
                                     <constraint firstItem="hyr-hT-dau" firstAttribute="leading" secondItem="Zeu-fs-uAQ" secondAttribute="leading" constant="6" id="hIX-Fa-Ow2"/>
+                                    <constraint firstAttribute="trailing" secondItem="pOp-LH-rFV" secondAttribute="trailing" id="l8x-EC-kwz"/>
                                     <constraint firstItem="x4F-DI-1zt" firstAttribute="bottom" secondItem="DXI-al-8qv" secondAttribute="bottom" constant="-15" id="mMu-mH-mWK"/>
-                                    <constraint firstItem="gvN-xl-hOO" firstAttribute="top" secondItem="Zeu-fs-uAQ" secondAttribute="top" constant="6" id="s8C-V5-3xS"/>
-                                    <constraint firstItem="gvN-xl-hOO" firstAttribute="centerX" secondItem="DXI-al-8qv" secondAttribute="centerX" id="sKr-ju-CMD"/>
-                                    <constraint firstItem="8dE-jy-HV1" firstAttribute="centerX" secondItem="hyr-hT-dau" secondAttribute="centerX" id="yEH-P7-clu"/>
-                                    <constraint firstItem="8dE-jy-HV1" firstAttribute="top" secondItem="Zeu-fs-uAQ" secondAttribute="top" constant="6" id="zVP-4V-ppV"/>
                                 </constraints>
                                 <size key="customSize" width="400" height="200"/>
                                 <connections>
                                     <outlet property="idLabel" destination="8dE-jy-HV1" id="uB5-gL-ylh"/>
                                     <outlet property="instructionsButton" destination="ZWr-MD-lxe" id="GAO-Qf-Koa"/>
                                     <outlet property="nameLabel" destination="gvN-xl-hOO" id="L7s-Ry-IGP"/>
+                                    <outlet property="removeButton" destination="x4F-DI-1zt" id="n7T-a1-2DQ"/>
                                     <outlet property="setImageView" destination="DXI-al-8qv" id="oOk-BT-SxG"/>
                                 </connections>
                             </collectionViewCell>
@@ -485,6 +499,7 @@
         <image name="brickInfo" width="50" height="50"/>
         <image name="imageError" width="300" height="150"/>
         <image name="instructions" width="50" height="50"/>
+        <image name="instructionsTabIcon" width="25" height="25"/>
         <image name="search" width="25" height="25"/>
         <image name="unfavorited" width="510" height="512"/>
     </resources>

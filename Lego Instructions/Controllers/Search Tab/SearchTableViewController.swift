@@ -18,7 +18,9 @@ class SearchTableViewController: UIViewController, UITableViewDelegate, UITableV
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var sortButton: UIButton!
     
-    var legoSets: [LegoSet] = []
+    var needsDataReload: Bool = false
+    var resultsLegoSets: [LegoSet] = []
+    var favoriteSetIDs: [String] = []
     var currentSort: SortOption = .name
     
     enum SortOption {
@@ -39,6 +41,13 @@ class SearchTableViewController: UIViewController, UITableViewDelegate, UITableV
         tableView.delegate = self
         tableView.dataSource = self
 
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        if needsDataReload {
+            tableView.reloadData()
+            needsDataReload = false
+        }
     }
     
     func search(searchTerm: String) {
@@ -62,7 +71,7 @@ class SearchTableViewController: UIViewController, UITableViewDelegate, UITableV
         
         LegoSetsController.shared.fetchSets(queries: queries) { (legoSets) in
             DispatchQueue.main.async {
-                self.legoSets = legoSets
+                self.resultsLegoSets = legoSets
                 
                 if legoSets.count > 0 {
                     self.loadingView.isHidden = true
@@ -79,19 +88,19 @@ class SearchTableViewController: UIViewController, UITableViewDelegate, UITableV
     }
     
     func sortSets() {
-        guard legoSets.count != 0 else { return }
+        guard resultsLegoSets.count != 0 else { return }
         
         switch currentSort {
         case .name:
-            legoSets.sort(by: { $0.name < $1.name })
+            resultsLegoSets.sort(by: { $0.name < $1.name })
         case .year:
-            legoSets.sort(by: { $0.year > $1.year })
+            resultsLegoSets.sort(by: { $0.year > $1.year })
         case .pieces:
-            legoSets.sort(by: { $0.pieces > $1.pieces })
+            resultsLegoSets.sort(by: { $0.pieces > $1.pieces })
         case .theme:
-            legoSets.sort(by: { $0.theme < $1.theme })
+            resultsLegoSets.sort(by: { $0.theme < $1.theme })
         case .id:
-            legoSets.sort(by: { $0.id > $1.id })
+            resultsLegoSets.sort(by: { $0.id > $1.id })
         }
     }
     
@@ -99,7 +108,7 @@ class SearchTableViewController: UIViewController, UITableViewDelegate, UITableV
         if newSort != currentSort {
             currentSort = newSort
             
-            guard legoSets.count != 0 else { return }
+            guard resultsLegoSets.count != 0 else { return }
             
             tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: true)
             sortSets()
@@ -174,12 +183,36 @@ class SearchTableViewController: UIViewController, UITableViewDelegate, UITableV
             IVC.loadViewIfNeeded()
             
             //stops same pdf from being loaded again
-            if IVC.legoSet?.id != legoSets[sender.tag].id {
-                IVC.legoSet = legoSets[sender.tag]
+            if IVC.legoSet?.id != resultsLegoSets[sender.tag].id {
+                IVC.legoSet = resultsLegoSets[sender.tag]
             }
             
             tabBar.selectedIndex = 1
         }
+        
+    }
+    
+    @objc func favoriteButtonTapped(_ sender: UIButton) {
+        
+        if let cell = tableView.cellForRow(at: IndexPath(row: sender.tag, section: 0)) as? SearchResultTableViewCell {
+            let set = resultsLegoSets[sender.tag]
+            cell.isFavorited = !cell.isFavorited
+            
+            if cell.isFavorited {
+                cell.favoriteButton.setImage(UIImage(named: "favorited"), for: .normal)
+            } else {
+                cell.favoriteButton.setImage(UIImage(named: "unfavorited"), for: .normal)
+            }
+            
+            if let viewControllers = tabBarController?.viewControllers,
+                let FVC = viewControllers[2] as? FavoritesCollectionViewController{
+                FVC.needsDataReload = true
+            }
+            
+            FavoritesController.shared.changedFavoriteStatus(set: set)
+            favoriteSetIDs = FavoritesController.shared.favoritesIds
+        }
+        
         
     }
     
@@ -188,15 +221,26 @@ class SearchTableViewController: UIViewController, UITableViewDelegate, UITableV
     //========================================
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return legoSets.count
+        favoriteSetIDs = FavoritesController.shared.favoritesIds
+        return resultsLegoSets.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "legoSetCell", for: indexPath) as! SearchResultTableViewCell
-        let set = legoSets[indexPath.row]
+        let set = resultsLegoSets[indexPath.row]
         
         cell.instructionsButton.tag = indexPath.row
         cell.instructionsButton.addTarget(self, action: #selector(getInstructionsButtonTapped(_:)), for: .touchUpInside)
+        cell.favoriteButton.tag = indexPath.row
+        cell.favoriteButton.addTarget(self, action: #selector(favoriteButtonTapped(_:)), for: .touchUpInside)
+        
+        if favoriteSetIDs.contains(set.id) {
+            cell.favoriteButton.setImage(UIImage(named: "favorited"), for: .normal)
+            cell.isFavorited = true
+        } else {
+            cell.favoriteButton.setImage(UIImage(named: "unfavorited"), for: .normal)
+            cell.isFavorited = false
+        }
         
         cell.nameLabel.text = "\(set.name)  (\(set.year))"
         cell.themeLabel.text = set.theme
@@ -249,26 +293,3 @@ extension SearchTableViewController: UISearchBarDelegate {
         search(searchTerm: searchTerm)
     }
 }
-
-//========================================
-// MARK: - Text Field Delegate
-//========================================
-
-//extension SearchTableViewController: UITextFieldDelegate {
-//
-//    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
-//
-//        if !string.isEmpty && (textField.text ?? "").count > 3 && Int((textField.text ?? "")) == nil {
-//            return false
-//        }
-//
-//        let invalidCharacters = CharacterSet(charactersIn: "0123456789").inverted
-//        return string.rangeOfCharacter(from: invalidCharacters) == nil
-//    }
-//
-//    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-//        textField.resignFirstResponder()
-//        search()
-//        return true
-//    }
-//}

@@ -60,9 +60,9 @@
 		7416D4CC2226E06B001F3996 /* Favorites Tab */ = {
 			isa = PBXGroup;
 			children = (
+				7416D4D12226E859001F3996 /* FavoritesController.swift */,
 				7416D4CF2226E6FE001F3996 /* FavoritesCollectionViewController.swift */,
 				7416D4D322282926001F3996 /* FavoriteCollectionViewCell.swift */,
-				7416D4D12226E859001F3996 /* FavoritesController.swift */,
 			);
 			path = "Favorites Tab";
 			sourceTree = "<group>";

@@ -11,10 +11,9 @@ import PDFKit
 
 class InstructionsViewController: UIViewController, PDFViewDelegate {
     
-    
     @IBOutlet weak var pdfDisplayView: UIView!
-    @IBOutlet weak var displayView: UIView!
     var pdfView: PDFView?
+    @IBOutlet weak var displayView: UIView!
     @IBOutlet weak var activityView: UIView!
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     @IBOutlet weak var activityLabel: UILabel!

@@ -18,4 +18,7 @@ class SearchResultTableViewCell: UITableViewCell {
     @IBOutlet weak var instructionsButton: UIButton!
     @IBOutlet weak var favoriteButton: UIButton!
     
+    //this mostly exists so reloading the table is faster because it doesn't loop through favoriteIds
+    var isFavorited: Bool = false
+    
 }

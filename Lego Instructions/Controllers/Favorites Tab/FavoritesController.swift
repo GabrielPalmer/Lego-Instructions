@@ -13,7 +13,6 @@ class FavoritesController {
     static let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
     static let setsArchiveURL = documentsDirectory.appendingPathComponent("favorites").appendingPathExtension("plist")
     
-    var needsVisualUpdate = false 
     var favoriteSets: [LegoSet] = []
     var favoritesIds: [String] {
         var ids: [String] = []
@@ -36,7 +35,6 @@ class FavoritesController {
     }
     
     func changedFavoriteStatus(set: LegoSet) {
-        needsVisualUpdate = true
         
         if favoritesIds.contains(set.id) {
             for index in 0...favoriteSets.count - 1 {
@@ -53,6 +51,7 @@ class FavoritesController {
             let propertyListEncoder = PropertyListEncoder()
             let encodedSets = try propertyListEncoder.encode(favoriteSets)
             try encodedSets.write(to: FavoritesController.setsArchiveURL, options: .noFileProtection)
+            print("updated favorites")
         } catch {
             print("failed to save favorites")
             print(error)
