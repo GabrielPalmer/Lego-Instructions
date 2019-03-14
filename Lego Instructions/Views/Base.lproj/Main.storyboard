@@ -13,7 +13,7 @@
         <!--Search Table View Controller-->
         <scene sceneID="olp-dD-6Sn">
             <objects>
-                <viewController id="sB7-Te-PHc" customClass="SearchTableViewController" customModule="Lego_Instructions" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="searchViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="sB7-Te-PHc" customClass="SearchTableViewController" customModule="Lego_Instructions" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="JNa-ws-lZs">
                         <rect key="frame" x="0.0" y="0.0" width="834" height="1194"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -200,11 +200,28 @@
         <!--Instructions-->
         <scene sceneID="P1l-ET-fEu">
             <objects>
-                <viewController id="Qmc-eq-Fl0" customClass="InstructionsViewController" customModule="Lego_Instructions" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="instructionsViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="Qmc-eq-Fl0" customClass="InstructionsViewController" customModule="Lego_Instructions" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="bBd-NL-V6H">
                         <rect key="frame" x="0.0" y="0.0" width="834" height="1194"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="Gzc-Vd-sok">
+                                <rect key="frame" x="0.0" y="136" width="150" height="993"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="150" id="w1K-OU-jq0"/>
+                                </constraints>
+                                <prototypes>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" rowHeight="90" id="nYr-bR-Ih0">
+                                        <rect key="frame" x="0.0" y="28" width="150" height="90"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="nYr-bR-Ih0" id="EQc-zX-b3b">
+                                            <rect key="frame" x="0.0" y="0.0" width="150" height="89.5"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                </prototypes>
+                            </tableView>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Qg5-06-e9U" userLabel="Header View">
                                 <rect key="frame" x="0.0" y="0.0" width="834" height="136"/>
                                 <subviews>
@@ -249,21 +266,21 @@
                                 </constraints>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="GMv-Ue-Fel">
-                                <rect key="frame" x="0.0" y="136" width="834" height="993"/>
+                                <rect key="frame" x="150" y="136" width="684" height="993"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="WX0-mP-9II" userLabel="pdfview">
-                                        <rect key="frame" x="15" y="15" width="804" height="963"/>
+                                        <rect key="frame" x="15" y="15" width="654" height="963"/>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                     </view>
                                     <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Qad-T0-1ci" userLabel="Activity View">
-                                        <rect key="frame" x="0.0" y="0.0" width="834" height="993"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="684" height="993"/>
                                         <subviews>
                                             <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" animating="YES" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="wYB-uD-uro">
-                                                <rect key="frame" x="398.5" y="478" width="37" height="37"/>
+                                                <rect key="frame" x="323.5" y="478" width="37" height="37"/>
                                                 <color key="color" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                             </activityIndicatorView>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Use the search tab to find LEGO sets or build of your favorites" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="cEj-vr-rXa">
-                                                <rect key="frame" x="88" y="530" width="658" height="30"/>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Use the search tab to find LEGO sets or build one of your favorites" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="cEj-vr-rXa">
+                                                <rect key="frame" x="-9.5" y="530" width="703.5" height="30"/>
                                                 <fontDescription key="fontDescription" type="system" pointSize="25"/>
                                                 <nil key="textColor"/>
                                                 <nil key="highlightedColor"/>
@@ -295,10 +312,13 @@
                         <constraints>
                             <constraint firstAttribute="bottom" secondItem="GMv-Ue-Fel" secondAttribute="bottom" constant="65" id="66N-r5-32a"/>
                             <constraint firstItem="J4g-7B-EBh" firstAttribute="trailing" secondItem="Qg5-06-e9U" secondAttribute="trailing" id="8SH-Sd-okf"/>
+                            <constraint firstItem="Gzc-Vd-sok" firstAttribute="top" secondItem="Qg5-06-e9U" secondAttribute="bottom" id="Iwl-Du-Uci"/>
                             <constraint firstItem="Qg5-06-e9U" firstAttribute="leading" secondItem="J4g-7B-EBh" secondAttribute="leading" id="JUt-ko-aYV"/>
+                            <constraint firstItem="J4g-7B-EBh" firstAttribute="bottom" secondItem="Gzc-Vd-sok" secondAttribute="bottom" id="KCP-Re-8wa"/>
                             <constraint firstAttribute="trailing" secondItem="GMv-Ue-Fel" secondAttribute="trailing" id="LzW-YJ-OSZ"/>
+                            <constraint firstItem="Gzc-Vd-sok" firstAttribute="leading" secondItem="J4g-7B-EBh" secondAttribute="leading" id="Mbo-rY-NnS"/>
                             <constraint firstItem="Qg5-06-e9U" firstAttribute="top" secondItem="bBd-NL-V6H" secondAttribute="top" id="OTL-82-GMf"/>
-                            <constraint firstItem="GMv-Ue-Fel" firstAttribute="leading" secondItem="bBd-NL-V6H" secondAttribute="leading" id="Qgi-NT-Wdf"/>
+                            <constraint firstItem="GMv-Ue-Fel" firstAttribute="leading" secondItem="Gzc-Vd-sok" secondAttribute="trailing" id="Ymu-AK-EjM"/>
                             <constraint firstItem="GMv-Ue-Fel" firstAttribute="top" secondItem="Qg5-06-e9U" secondAttribute="bottom" id="lqV-EE-9gj"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="J4g-7B-EBh"/>
@@ -311,19 +331,22 @@
                         <outlet property="displayView" destination="GMv-Ue-Fel" id="UBp-4D-xnL"/>
                         <outlet property="headerHeight" destination="pnH-Xv-czy" id="dey-Ug-ZCt"/>
                         <outlet property="infoButton" destination="Zf7-ex-x36" id="9gx-21-nu9"/>
+                        <outlet property="partsTableView" destination="Gzc-Vd-sok" id="Jgx-bp-XML"/>
                         <outlet property="pdfDisplayView" destination="WX0-mP-9II" id="QTJ-eI-7bW"/>
                         <outlet property="setNameLabel" destination="cyd-e6-BDa" id="Ay2-Vv-MgA"/>
-                        <outlet property="tabsStackView" destination="0OA-cX-rdq" id="LKK-qi-BOv"/>
+                        <outlet property="tabsStackView" destination="0OA-cX-rdq" id="iGZ-en-pwh"/>
+                        <outlet property="tabsStackViewLeadingSpace" destination="Vrd-pK-mUN" id="sN5-dB-3TT"/>
+                        <outlet property="tabsStackViewTrailingSpace" destination="ENd-FO-Z6y" id="8jt-Vb-GU3"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="LVJ-hN-cZb" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1658" y="508"/>
+            <point key="canvasLocation" x="1657.5539568345325" y="507.53768844221105"/>
         </scene>
         <!--Tab Bar Controller-->
         <scene sceneID="KOH-gi-HX8">
             <objects>
-                <tabBarController automaticallyAdjustsScrollViewInsets="NO" id="UVm-qQ-59G" sceneMemberID="viewController">
+                <tabBarController storyboardIdentifier="tabBarController" automaticallyAdjustsScrollViewInsets="NO" useStoryboardIdentifierAsRestorationIdentifier="YES" id="UVm-qQ-59G" sceneMemberID="viewController">
                     <toolbarItems/>
                     <tabBar key="tabBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="1Lb-IT-qG1">
                         <rect key="frame" x="0.0" y="0.0" width="1000" height="1000"/>
@@ -343,7 +366,7 @@
         <!--Favorites Collection View Controller-->
         <scene sceneID="tQI-Hj-frJ">
             <objects>
-                <collectionViewController id="x8Z-Ez-CpJ" customClass="FavoritesCollectionViewController" customModule="Lego_Instructions" customModuleProvider="target" sceneMemberID="viewController">
+                <collectionViewController storyboardIdentifier="favoritesCollectionViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="x8Z-Ez-CpJ" customClass="FavoritesCollectionViewController" customModule="Lego_Instructions" customModuleProvider="target" sceneMemberID="viewController">
                     <collectionView key="view" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" id="V8f-Gy-ch1">
                         <rect key="frame" x="0.0" y="0.0" width="834" height="1194"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>

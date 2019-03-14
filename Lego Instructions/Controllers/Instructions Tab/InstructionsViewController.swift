@@ -9,7 +9,7 @@
 import UIKit
 import PDFKit
 
-class InstructionsViewController: UIViewController, PDFViewDelegate {
+class InstructionsViewController: UIViewController, PDFViewDelegate, UITableViewDataSource, UITableViewDelegate {
     
     @IBOutlet weak var pdfDisplayView: UIView!
     var pdfView: PDFView?
@@ -22,9 +22,18 @@ class InstructionsViewController: UIViewController, PDFViewDelegate {
     @IBOutlet weak var setNameLabel: UILabel!
     @IBOutlet weak var infoButton: UIButton!
     @IBOutlet weak var tabsStackView: UIStackView!
+    @IBOutlet weak var tabsStackViewTrailingSpace: NSLayoutConstraint!
+    @IBOutlet weak var tabsStackViewLeadingSpace: NSLayoutConstraint!
     
+    @IBOutlet weak var partsTableView: UITableView!
+    
+    var parts: [LegoPart]?
     var pdfURLs: [String] = []
     var currentTab: Int = 0
+    
+    //used for state restoration
+    fileprivate var savedPageIndex: Int?
+    fileprivate var savedTabIndex: Int?
     
     var legoSet: LegoSet? {
         didSet {
@@ -40,16 +49,20 @@ class InstructionsViewController: UIViewController, PDFViewDelegate {
         }
     }
     
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        self.pdfFitPage()
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        partsTableView.dataSource = self
+        partsTableView.delegate = self
+        
+        print("InstructionsViewController did load")
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         if legoSet == nil {
             activityIndicator.isHidden = true
-            setNameLabel.text = "No Set Selected"
+            setNameLabel.text = "No Build Selected"
             infoButton.isHidden = true
             displayView.bringSubviewToFront(activityView)
             activityView.isHidden = false
@@ -59,6 +72,23 @@ class InstructionsViewController: UIViewController, PDFViewDelegate {
             activityView.isHidden = true
         }
         
+    }
+    
+    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        super.viewWillTransition(to: size, with: coordinator)
+        if let pdfView = pdfView {
+            let widthScale = size.width / view.bounds.width
+            let newScale = pdfView.scaleFactor * widthScale
+            pdfView.scaleFactor = newScale
+        }
+    }
+    
+    func pdfFitPage() {
+        guard let pdf = self.pdfView, let doc = pdf.document, doc.pageCount > 0 else { return }
+        pdf.autoScales = true
+        pdf.scaleFactor = pdf.scaleFactorForSizeToFit
+        pdf.minScaleFactor = pdf.scaleFactor - (pdf.scaleFactor / 4.0)
+        pdf.maxScaleFactor = 3
     }
     
     func setUpTabsStackView() {
@@ -78,11 +108,31 @@ class InstructionsViewController: UIViewController, PDFViewDelegate {
         }
         
         guard pdfURLs.count > 0 else {
-            activityLabel.text = "Could not find the any of the instructions listed.\nThis was probably caused by inaccurate info on brickset.com"
+            activityLabel.text = "Could not find any of the instructions listed.\nThis was probably caused by inaccurate info on brickset.com"
             activityIndicator.isHidden = true
             displayView.bringSubviewToFront(activityView)
             activityView.isHidden = false
             return
+        }
+        
+        
+        switch pdfURLs.count {
+        case 2:
+            tabsStackView.spacing = 28
+            tabsStackViewLeadingSpace.constant = 28
+            tabsStackViewTrailingSpace.constant = 28
+        case 3:
+            tabsStackView.spacing = 21
+            tabsStackViewLeadingSpace.constant = 21
+            tabsStackViewTrailingSpace.constant = 21
+        case 4:
+            tabsStackView.spacing = 14
+            tabsStackViewLeadingSpace.constant = 14
+            tabsStackViewTrailingSpace.constant = 14
+        default:
+            tabsStackView.spacing = 7
+            tabsStackViewLeadingSpace.constant = 7
+            tabsStackViewTrailingSpace.constant = 7
         }
         
         let screenWidth = view.bounds.width
@@ -102,7 +152,13 @@ class InstructionsViewController: UIViewController, PDFViewDelegate {
             tabsStackView.addArrangedSubview(button)
         }
         
-        switchToTab(0)
+        //restores
+        if let savedTabIndex = savedTabIndex {
+            switchToTab(savedTabIndex)
+            self.savedTabIndex = nil
+        } else {
+            switchToTab(0)
+        }
         
     }
     
@@ -110,13 +166,14 @@ class InstructionsViewController: UIViewController, PDFViewDelegate {
         currentTab = tab
         
         for button in tabsStackView.arrangedSubviews {
-            if tab != button.tag {
+            if currentTab != button.tag {
                 button.backgroundColor = #colorLiteral(red: 0.7672145258, green: 0.7784764083, blue: 0.8122620558, alpha: 1)
             } else {
                 button.backgroundColor = #colorLiteral(red: 0.501960814, green: 0.501960814, blue: 0.501960814, alpha: 1)
             }
         }
         
+        //creates the PDFView the first time it's needed
         if pdfView == nil {
             
             let newPDFView = PDFView()
@@ -141,7 +198,7 @@ class InstructionsViewController: UIViewController, PDFViewDelegate {
         
         DispatchQueue.global(qos: .utility).async {
             
-            let url = URL(string: self.pdfURLs[tab])!
+            let url = URL(string: self.pdfURLs[self.currentTab])!
             let document = PDFDocument(url: url)
             
             DispatchQueue.main.async {
@@ -150,23 +207,21 @@ class InstructionsViewController: UIViewController, PDFViewDelegate {
                     self.activityView.isHidden = true
                     self.activityIndicator.isHidden = true
                     self.pdfView?.document = document
+                    self.pdfFitPage()
+                    
+                    if let savedPageIndex = self.savedPageIndex, let page = document.page(at: savedPageIndex) {
+                        self.pdfView?.go(to: page)
+                        self.savedPageIndex = nil
+                    }
+                    
                     self.displayView.bringSubviewToFront(self.pdfDisplayView)
                 } else {
-                    print("Instructions did not exist for part \(tab) of \(self.setNameLabel.text ?? "")")
+                    print("Instructions did not exist for part \(self.currentTab) of \(self.setNameLabel.text ?? "")")
                     self.activityIndicator.isHidden = true
-                    self.activityLabel.text = "There was an error loading the document"
+                    self.activityLabel.text = "There was an error loading this document"
                 }
             }
         }
-        
-    }
-    
-    func pdfFitPage() {
-        guard let pdf = self.pdfView, let doc = pdf.document, doc.pageCount > 0 else { return }
-        pdf.scaleFactor = pdf.scaleFactorForSizeToFit
-        pdf.minScaleFactor = pdf.scaleFactor
-        pdf.maxScaleFactor = 3
-        pdf.autoScales = true
         
     }
     
@@ -182,49 +237,56 @@ class InstructionsViewController: UIViewController, PDFViewDelegate {
     
     @IBAction func infoButtonTapped(_ sender: Any) {
         
-        let setInfoView = UIView(frame: CGRect(x: 0, y: 0, width: 200, height: 350))
-        view.addSubview(setInfoView)
-        
-        NSLayoutConstraint.activate([
-            NSLayoutConstraint(item: setInfoView, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .height, multiplier: 1, constant: 350),
-            NSLayoutConstraint(item: setInfoView, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .width, multiplier: 1, constant: 200),
-            NSLayoutConstraint(item: setInfoView, attribute: .centerX, relatedBy: .equal, toItem: infoButton, attribute: .centerX, multiplier: 1, constant: 0),
-            NSLayoutConstraint(item: setInfoView, attribute: .top, relatedBy: .equal, toItem: infoButton, attribute: .bottom, multiplier: 1, constant: 15)
-            ])
-        
-        
-//        let titleLabel = UILabel()
-//        titleLabel.text = "Information About This LEGO Set"
-//
-//        let errorLabel1 = UILabel()
-//        errorLabel1.numberOfLines = 0
-//        errorLabel1.text = "Wrong Instructions?\n Make sure you selected the correct set.\nOtherwise this was probably caused by an inaccurate listing.\nUse the link to find the instructions online."
-//
-//        let button1 = UIButton()
-//        button1.titleLabel?.text = "View on Brickset.com"
-//
-//        let errorLabel2 = UILabel()
-//        errorLabel2.numberOfLines = 0
-//        errorLabel2.text = "Missing Parts or Duplicates in Instructions?\nThe instruction parts are often unordered so try through looking again. Otherwise, when finding the listed parts of instruction for a set, this application automatically removes duplicates, but it isn't perfect and might have made a mistake. This happens expecially when working with older sets."
-//
-//        let button2 = UIButton()
-//        button2.titleLabel?.text = "Show all instructions listed"
-//
-//        let stackView = UIStackView(arrangedSubviews: [titleLabel, errorLabel1, button1, errorLabel2, button2])
-//        stackView.axis = .vertical
-//        stackView.translatesAutoresizingMaskIntoConstraints = false
-//        setInfoView.addSubview(stackView)
-//
-//        stackView.topAnchor.constraint(equalTo: setInfoView.topAnchor, constant: 6)
-//        stackView.bottomAnchor.constraint(equalTo: setInfoView.bottomAnchor, constant: 6)
-//        stackView.leadingAnchor.constraint(equalTo: setInfoView.leadingAnchor, constant: 6)
-//        stackView.trailingAnchor.constraint(equalTo: setInfoView.trailingAnchor, constant: 6)
-        
-        
-        
-        
+        if let legoSet = legoSet {
+            LegoPartsController.shared.fetchParts(bricksetLegoSet: legoSet) { (parts) in
+                if let parts = parts {
+                    print(parts)
+                } else {
+                    print("no parts found")
+                }
+                
+            }
+        }
         
     }
     
+    //===========================================
+    // MARK: - State Preservation
+    //===========================================
+    
+    //state preservation functions are run after the view loads
+    
+    override func encodeRestorableState(with coder: NSCoder) {
+        super.encodeRestorableState(with: coder)
+
+        guard let pdfView = pdfView, let document = pdfView.document, let page = pdfView.currentPage else { return }
+        let pageIndex = document.index(for: page)
+        coder.encode(pageIndex, forKey: "pageIndex")
+        coder.encode(currentTab, forKey: "tabIndex")
+        coder.encode(legoSet, forKey: "legoSet")
+    }
+
+    override func decodeRestorableState(with coder: NSCoder) {
+        super.decodeRestorableState(with: coder)
+        
+        if let set = coder.decodeObject(forKey: "legoSet") as? LegoSet {
+            legoSet = set
+            savedPageIndex = coder.decodeInteger(forKey: "pageIndex")
+            savedTabIndex = coder.decodeInteger(forKey: "tabIndex")
+        }
+    }
+    
+    //===========================================
+    // MARK: - Parts Table View Delegate
+    //===========================================
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        <#code#>
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        <#code#>
+    }
     
 }
+

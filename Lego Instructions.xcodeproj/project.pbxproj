@@ -11,6 +11,7 @@
 		7416D4D22226E859001F3996 /* FavoritesController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7416D4D12226E859001F3996 /* FavoritesController.swift */; };
 		7416D4D422282926001F3996 /* FavoriteCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7416D4D322282926001F3996 /* FavoriteCollectionViewCell.swift */; };
 		7416D4D6222830F0001F3996 /* ButtonDesign.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7416D4D5222830F0001F3996 /* ButtonDesign.swift */; };
+		7416D4D8222EDCDA001F3996 /* TabBarAnimationExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7416D4D7222EDCDA001F3996 /* TabBarAnimationExtension.swift */; };
 		7420CFB822088FD600EA713A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7420CFB722088FD600EA713A /* AppDelegate.swift */; };
 		7420CFBD22088FD600EA713A /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7420CFBB22088FD600EA713A /* Main.storyboard */; };
 		7420CFBF22088FD800EA713A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7420CFBE22088FD800EA713A /* Assets.xcassets */; };
@@ -22,6 +23,8 @@
 		7420CFD92208A3C200EA713A /* LegoSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7420CFD82208A3C200EA713A /* LegoSet.swift */; };
 		7420CFDB2208AA6000EA713A /* LegoSetsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7420CFDA2208AA6000EA713A /* LegoSetsController.swift */; };
 		7420CFDD2209D5C700EA713A /* NetworkController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7420CFDC2209D5C700EA713A /* NetworkController.swift */; };
+		7426D9D52237F8280001D6E7 /* LegoPartsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7426D9D42237F8280001D6E7 /* LegoPartsController.swift */; };
+		7426D9D72238079B0001D6E7 /* LegoPart.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7426D9D62238079B0001D6E7 /* LegoPart.swift */; };
 		7489AE002211CAF50053A586 /* PDFController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7489ADFF2211CAF50053A586 /* PDFController.swift */; };
 /* End PBXBuildFile section */
 
@@ -30,6 +33,7 @@
 		7416D4D12226E859001F3996 /* FavoritesController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesController.swift; sourceTree = "<group>"; };
 		7416D4D322282926001F3996 /* FavoriteCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoriteCollectionViewCell.swift; sourceTree = "<group>"; };
 		7416D4D5222830F0001F3996 /* ButtonDesign.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonDesign.swift; sourceTree = "<group>"; };
+		7416D4D7222EDCDA001F3996 /* TabBarAnimationExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarAnimationExtension.swift; sourceTree = "<group>"; };
 		7420CFB422088FD600EA713A /* Lego Instructions.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Lego Instructions.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		7420CFB722088FD600EA713A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		7420CFBC22088FD600EA713A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -43,6 +47,8 @@
 		7420CFD82208A3C200EA713A /* LegoSet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegoSet.swift; sourceTree = "<group>"; };
 		7420CFDA2208AA6000EA713A /* LegoSetsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegoSetsController.swift; sourceTree = "<group>"; };
 		7420CFDC2209D5C700EA713A /* NetworkController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkController.swift; sourceTree = "<group>"; };
+		7426D9D42237F8280001D6E7 /* LegoPartsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegoPartsController.swift; sourceTree = "<group>"; };
+		7426D9D62238079B0001D6E7 /* LegoPart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegoPart.swift; sourceTree = "<group>"; };
 		7489ADFF2211CAF50053A586 /* PDFController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDFController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -60,7 +66,6 @@
 		7416D4CC2226E06B001F3996 /* Favorites Tab */ = {
 			isa = PBXGroup;
 			children = (
-				7416D4D12226E859001F3996 /* FavoritesController.swift */,
 				7416D4CF2226E6FE001F3996 /* FavoritesCollectionViewController.swift */,
 				7416D4D322282926001F3996 /* FavoriteCollectionViewCell.swift */,
 			);
@@ -89,7 +94,7 @@
 				7420CFB722088FD600EA713A /* AppDelegate.swift */,
 				7420CFCB2208926B00EA713A /* Views */,
 				7420CFC92208924B00EA713A /* Controllers */,
-				7420CFCA2208925C00EA713A /* Model */,
+				7420CFCA2208925C00EA713A /* Models */,
 				7420CFBE22088FD800EA713A /* Assets.xcassets */,
 				7420CFC322088FD800EA713A /* Info.plist */,
 			);
@@ -100,6 +105,9 @@
 			isa = PBXGroup;
 			children = (
 				7420CFDC2209D5C700EA713A /* NetworkController.swift */,
+				7416D4D12226E859001F3996 /* FavoritesController.swift */,
+				7420CFDA2208AA6000EA713A /* LegoSetsController.swift */,
+				7426D9D42237F8280001D6E7 /* LegoPartsController.swift */,
 				7420CFD022089A9E00EA713A /* Search Tab */,
 				7416D4CC2226E06B001F3996 /* Favorites Tab */,
 				7420CFD322089FF000EA713A /* Instructions Tab */,
@@ -107,12 +115,13 @@
 			path = Controllers;
 			sourceTree = "<group>";
 		};
-		7420CFCA2208925C00EA713A /* Model */ = {
+		7420CFCA2208925C00EA713A /* Models */ = {
 			isa = PBXGroup;
 			children = (
 				7420CFD82208A3C200EA713A /* LegoSet.swift */,
+				7426D9D62238079B0001D6E7 /* LegoPart.swift */,
 			);
-			path = Model;
+			path = Models;
 			sourceTree = "<group>";
 		};
 		7420CFCB2208926B00EA713A /* Views */ = {
@@ -122,6 +131,7 @@
 				7420CFC022088FD800EA713A /* LaunchScreen.storyboard */,
 				7420CFD42208A07400EA713A /* ViewDesign.swift */,
 				7416D4D5222830F0001F3996 /* ButtonDesign.swift */,
+				7416D4D7222EDCDA001F3996 /* TabBarAnimationExtension.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -129,7 +139,6 @@
 		7420CFD022089A9E00EA713A /* Search Tab */ = {
 			isa = PBXGroup;
 			children = (
-				7420CFDA2208AA6000EA713A /* LegoSetsController.swift */,
 				7420CFD62208A36000EA713A /* SearchTableViewController.swift */,
 				7420CFD122089ACA00EA713A /* SearchResultTableViewCell.swift */,
 			);
@@ -220,8 +229,10 @@
 				7420CFCF220892CC00EA713A /* InstructionsViewController.swift in Sources */,
 				7420CFD92208A3C200EA713A /* LegoSet.swift in Sources */,
 				7420CFB822088FD600EA713A /* AppDelegate.swift in Sources */,
+				7416D4D8222EDCDA001F3996 /* TabBarAnimationExtension.swift in Sources */,
 				7416D4D422282926001F3996 /* FavoriteCollectionViewCell.swift in Sources */,
 				7416D4D02226E6FE001F3996 /* FavoritesCollectionViewController.swift in Sources */,
+				7426D9D72238079B0001D6E7 /* LegoPart.swift in Sources */,
 				7420CFD72208A36000EA713A /* SearchTableViewController.swift in Sources */,
 				7420CFD222089ACA00EA713A /* SearchResultTableViewCell.swift in Sources */,
 				7420CFD52208A07400EA713A /* ViewDesign.swift in Sources */,
@@ -229,6 +240,7 @@
 				7416D4D6222830F0001F3996 /* ButtonDesign.swift in Sources */,
 				7489AE002211CAF50053A586 /* PDFController.swift in Sources */,
 				7416D4D22226E859001F3996 /* FavoritesController.swift in Sources */,
+				7426D9D52237F8280001D6E7 /* LegoPartsController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

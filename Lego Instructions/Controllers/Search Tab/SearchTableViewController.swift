@@ -8,7 +8,7 @@
 
 import UIKit
 
-class SearchTableViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+class SearchTableViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UITabBarControllerDelegate {
 
     @IBOutlet weak var loadingView: UIView!
     @IBOutlet weak var searchingIndicator: UIActivityIndicatorView!
@@ -33,6 +33,7 @@ class SearchTableViewController: UIViewController, UITableViewDelegate, UITableV
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        print("SearchTableViewController did load")
         
         view.bringSubviewToFront(loadingView)
         
@@ -55,7 +56,6 @@ class SearchTableViewController: UIViewController, UITableViewDelegate, UITableV
         let queries: Dictionary<String, String> = [
             "apiKey" : "B5sG-5uAN-22mW",
             "query" : searchTerm,
-            
             "orderBy" : "",
             "userHash" : "",
             "year" : "",
@@ -64,7 +64,7 @@ class SearchTableViewController: UIViewController, UITableViewDelegate, UITableV
             "setNumber" : "",
             "owned" : "",
             "wanted" : "",
-            "pageSize" : "30",
+            "pageSize" : "50",
             "pageNumber" : "",
             "userName" : ""
         ]
@@ -116,9 +116,24 @@ class SearchTableViewController: UIViewController, UITableViewDelegate, UITableV
         }
     }
     
-    //========================================
+    //===========================================
+    // MARK: - UITabBarControllerDelegate
+    //===========================================
+    
+    //this function is called by all view controllers in the tab bar
+    func tabBarController(_ tabBarController: UITabBarController, shouldSelect viewController: UIViewController) -> Bool {
+        guard let toIndex = tabBarController.viewControllers?.firstIndex(of: viewController) else {
+            return false
+        }
+        
+        tabBarController.animateToTab(toIndex: toIndex)
+        
+        return true
+    }
+    
+    //===========================================
     // MARK: - Actions
-    //========================================
+    //===========================================
     
     @IBAction func sortButtonTapped(_ sender: UIButton) {
         
@@ -187,7 +202,7 @@ class SearchTableViewController: UIViewController, UITableViewDelegate, UITableV
                 IVC.legoSet = resultsLegoSets[sender.tag]
             }
             
-            tabBar.selectedIndex = 1
+            tabBar.animateToTab(toIndex: 1)
         }
         
     }
@@ -205,7 +220,7 @@ class SearchTableViewController: UIViewController, UITableViewDelegate, UITableV
             }
             
             if let viewControllers = tabBarController?.viewControllers,
-                let FVC = viewControllers[2] as? FavoritesCollectionViewController{
+                let FVC = viewControllers[2] as? FavoritesCollectionViewController {
                 FVC.needsDataReload = true
             }
             
@@ -271,6 +286,28 @@ class SearchTableViewController: UIViewController, UITableViewDelegate, UITableV
     
     func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath) -> IndexPath? {
         return nil
+    }
+    
+    //===========================================
+    // MARK: - State Preservation
+    //===========================================
+    
+    override func encodeRestorableState(with coder: NSCoder) {
+        super.encodeRestorableState(with: coder)
+        coder.encode(searchBar.text, forKey: "searchTerm")
+    }
+    
+    override func decodeRestorableState(with coder: NSCoder) {
+        super.decodeRestorableState(with: coder)
+        
+        guard tabBarController?.selectedIndex == 0 else { return }
+        guard let searchText = coder.decodeObject(forKey: "searchTerm") as? String else { return }
+        
+        if !searchText.trimmingCharacters(in: .whitespaces).isEmpty {
+            searchBar.text = searchText
+            search(searchTerm: searchText)
+        }
+        
     }
     
 }

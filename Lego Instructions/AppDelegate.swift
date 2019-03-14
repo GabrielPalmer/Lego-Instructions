@@ -13,9 +13,26 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
 
+    func application(_ application: UIApplication, shouldSaveApplicationState coder: NSCoder) -> Bool {
+        return true
+    }
+    
+    func application(_ application: UIApplication, shouldRestoreApplicationState coder: NSCoder) -> Bool {
+        return true
+    }
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        FavoritesController.shared.loadFavorites()
+        FavoritesController.shared.loadFavoriteSets()
+        
+        if let tabBar = window?.rootViewController as? UITabBarController,
+            let viewControllers = tabBar.viewControllers,
+            let SVC = viewControllers[0] as? SearchTableViewController {
+            tabBar.delegate = SVC
+            print("successfully set tab bar delegate")
+        } else {
+            print("could not set the tab bar delegate from the view hierchy")
+        }
+        
         return true
     }
 

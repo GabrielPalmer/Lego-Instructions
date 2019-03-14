@@ -49,7 +49,7 @@ class LegoSetsController: NSObject, XMLParserDelegate {
     
     func parser(_ parser: XMLParser, didEndElement elementName: String, namespaceURI: String?, qualifiedName qName: String?) {
         if elementName == "sets" && legoSetDict["instructionsCount"]! != "0" && legoSetDict["theme"]! != "Duplo" {
-            if let legoSet = LegoSet(legoSetDict) {
+            if let legoSet = LegoSet(bricksetDictionary: legoSetDict) {
                 parsedSets.append(legoSet)
             }
         }

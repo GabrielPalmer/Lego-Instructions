@@ -10,6 +10,7 @@ import UIKit
 
 class FavoritesCollectionViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout {
 
+    var favoriteSets: [LegoSet] = []
     var needsDataReload: Bool = false
     
     override func viewWillAppear(_ animated: Bool) {
@@ -21,21 +22,63 @@ class FavoritesCollectionViewController: UICollectionViewController, UICollectio
         }
     }
     
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        print("FavoritesCollectionViewController did load")
+    }
+    
     @objc func instructionsButtonTapped(_ sender: UIButton) {
-        
+        if let tabBar = tabBarController,
+            let viewControllers = tabBarController?.viewControllers,
+            let IVC = viewControllers[1] as? InstructionsViewController {
+            
+            IVC.loadViewIfNeeded()
+            
+            //stops same pdf from being loaded again
+            if IVC.legoSet?.id != favoriteSets[sender.tag].id {
+                IVC.legoSet = favoriteSets[sender.tag]
+            }
+            
+            tabBar.animateToTab(toIndex: 1)
+        }
     }
     
     @objc func removeButtonTapped(_ sender: UIButton) {
         
-        if let viewControllers = tabBarController?.viewControllers,
-            let SVC = viewControllers[0] as? SearchTableViewController {
-            SVC.needsDataReload = true
-        }
+        let alertController = UIAlertController(
+            title: "Remove \"\(favoriteSets[sender.tag].name)\"\nfrom your favorites?",
+            message: nil,
+            preferredStyle: .actionSheet)
         
-        FavoritesController.shared.changedFavoriteStatus(set: FavoritesController.shared.favoriteSets[sender.tag])
+        alertController.addAction(UIAlertAction(
+            title: "Delete",
+            style: .destructive,
+            handler: { (_) in
+                
+                if let viewControllers = self.tabBarController?.viewControllers,
+                    let SVC = viewControllers[0] as? SearchTableViewController {
+                    SVC.needsDataReload = true
+                }
+                
+                FavoritesController.shared.changedFavoriteStatus(set: self.favoriteSets[sender.tag])
+                self.favoriteSets.remove(at: sender.tag)
+                self.collectionView.deleteItems(at: [IndexPath(item: sender.tag, section: 0)])
+                
+                for cell in self.collectionView.visibleCells as! [FavoriteCollectionViewCell] {
+                    if cell.instructionsButton.tag > sender.tag {
+                        cell.instructionsButton.tag -= 1
+                        cell.removeButton.tag -= 1
+                    }
+                }
+                
+        }))
         
-        collectionView.deleteItems(at: [IndexPath(item: sender.tag, section: 0)])
-        
+        present(alertController, animated: true)
+        alertController.popoverPresentationController?.permittedArrowDirections = .up
+        let sourceRect = CGRect(x: sender.bounds.width / 2, y: sender.bounds.height, width: 0, height: 0)
+        alertController.popoverPresentationController?.sourceView = sender
+        alertController.popoverPresentationController?.sourceRect = sourceRect
+
     }
     
     //========================================
@@ -43,13 +86,13 @@ class FavoritesCollectionViewController: UICollectionViewController, UICollectio
     //========================================
 
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return FavoritesController.shared.favoriteSets.count
+        favoriteSets = FavoritesController.shared.favoriteSets
+        return favoriteSets.count
     }
 
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "favoriteCell", for: indexPath) as! FavoriteCollectionViewCell
-        let set = FavoritesController.shared.favoriteSets[indexPath.row]
-        
+        let set = favoriteSets[indexPath.row]
         cell.idLabel.text = "#\(set.id)"
         cell.nameLabel.text = set.name
         
@@ -60,6 +103,7 @@ class FavoritesCollectionViewController: UICollectionViewController, UICollectio
         cell.removeButton.addTarget(self, action: #selector(removeButtonTapped(_:)), for: .touchUpInside)
         
         cell.layer.cornerRadius = 10
+        cell.nameLabel.adjustsFontSizeToFitWidth = true
         
         cellImage(for: set) { (image) in
             DispatchQueue.main.async {
@@ -92,7 +136,13 @@ class FavoritesCollectionViewController: UICollectionViewController, UICollectio
     //===========================================
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let horizontalCells = Int(view.bounds.width / 400.0)
+        
+        var horizontalCells = Int(view.bounds.width / 350.0)
+        
+        if horizontalCells < 2 {
+            horizontalCells = 2
+        }
+        
         let horizontalSpacing = (horizontalCells + 1) * 15
         let cellWidth = (view.bounds.width - CGFloat(horizontalSpacing)) / CGFloat(horizontalCells)
         

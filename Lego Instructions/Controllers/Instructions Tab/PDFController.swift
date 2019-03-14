@@ -34,42 +34,40 @@ class PDFController: NSObject, XMLParserDelegate {
             xmlParser?.parse()
             
             //example urlDescription: "BI 3005/60 , 60031 V29 1/2"
-            //tests with: "bank" 8461
+            //do tests with "bank" #8461
             
-            //pdfURLs will have duplicates removed but keep a copy of the original
+            //pdfURLs will have duplicates removed but keeps a copy of the original
             self.allURLs.append(contentsOf: self.pdfURLs)
             
+            //if all urls had the description "{No longer listed at LEGO.com}" they won't be listed in pdfURLs
             if self.pdfURLs.count == 0 && self.allURLs.count > 0 {
                 completion(self.allURLs)
                 return
             }
-
-            if self.pdfURLs.count > 1, (self.pdfURLs.count % 2) == 0 {
-                
-                guard let expectedInstructions = Int(legoSet.instructionsCount) else {
-                    completion(self.pdfURLs)
-                    return
-                }
+            
+            if self.pdfURLs.count > 1 {
                 
                 var instructionsFound: Int?
+                var breakLoop: Bool = false
                 
-                for index in 0...self.urlDescriptions.count - 1 {
-                    var description = self.urlDescriptions[index]
-                    
-                    // remove first half of description because it doesn't
-                    // have what we want and has a chance of confusing the parser
+                for descriptionIndex in 0...self.urlDescriptions.count - 1 {
+                    var description = self.urlDescriptions[descriptionIndex]
                     description.removeFirst(description.count / 2)
                     
-                    if description.contains("1/\(expectedInstructions)") {
-                        instructionsFound = expectedInstructions
-                        break
-                    } else if description.contains("1/\(expectedInstructions / 2)") {
-                        instructionsFound = expectedInstructions / 2
+                    for index in 1...self.urlDescriptions.count {
+                        if description.contains("1/\(index)") {
+                            instructionsFound = index
+                            breakLoop = true
+                            break
+                        }
+                    }
+                    
+                    if breakLoop {
                         break
                     }
                 }
                 
-                guard let actualInstructions = instructionsFound else {
+                guard let instructionsAmount = instructionsFound else {
                     // if it could not determine how many instructions there's supposed to be,
                     // return the first if there's two because the seconds a duplicate, otherwise
                     // a parsing error probably occured so return all
@@ -82,8 +80,8 @@ class PDFController: NSObject, XMLParserDelegate {
                     }
                 }
                 
-                //if the amount of urls found is the same as the actual instructions amount found then no duplicates exist
-                if self.pdfURLs.count == actualInstructions {
+                //if the amount of urls found is the same as the instructions amount found then no duplicates exist
+                if self.pdfURLs.count == instructionsAmount {
                     completion(self.pdfURLs)
                     return
                 }
@@ -91,13 +89,14 @@ class PDFController: NSObject, XMLParserDelegate {
                 var shouldDeleteDuplicates = false
                 var pdfIndexesToDelete: [Int] = []
                 
-                for instructionsIndex in 0...actualInstructions - 1 {
+                for instructionsIndex in 0...instructionsAmount - 1 {
                     shouldDeleteDuplicates = false
                     
                     for descriptionIndex in 0...self.urlDescriptions.count - 1 {
-                        let description = self.urlDescriptions[descriptionIndex]
+                        var description = self.urlDescriptions[descriptionIndex]
+                        description.removeFirst(description.count / 2)
                         
-                        if description.contains("\(instructionsIndex + 1)/\(actualInstructions)") {
+                        if description.contains("\(instructionsIndex + 1)/\(instructionsAmount)") || description.contains("\(instructionsIndex + 1) / \(instructionsAmount)") {
                             if shouldDeleteDuplicates {
                                 pdfIndexesToDelete.append(descriptionIndex)
                             } else {
@@ -156,6 +155,16 @@ class PDFController: NSObject, XMLParserDelegate {
 
 extension Array {
     mutating func remove(at indexes: [Int]) {
+        var mutableIndexes = indexes
+        
+        for _ in 0...indexes.count - 1 {
+            let value = mutableIndexes.removeFirst()
+            if mutableIndexes.contains(value) {
+                print("\n\nWARNING: duplicate indexes were detected in Array extension remove(at indexes: [Int])\n\n")
+                return
+            }
+        }
+        
         for index in indexes.sorted(by: >) {
             remove(at: index)
         }

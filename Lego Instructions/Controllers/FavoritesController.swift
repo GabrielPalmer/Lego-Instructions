@@ -22,7 +22,7 @@ class FavoritesController {
         return ids
     }
     
-    func loadFavorites() {
+    func loadFavoriteSets() {
         
         let propertyListDecoder = PropertyListDecoder()
         if let retrievedSetsData = try? Data(contentsOf: FavoritesController.setsArchiveURL),
@@ -59,8 +59,5 @@ class FavoritesController {
         
         
     }
-    
-    
-    
     
 }
