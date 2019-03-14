@@ -294,7 +294,12 @@ class SearchTableViewController: UIViewController, UITableViewDelegate, UITableV
     
     override func encodeRestorableState(with coder: NSCoder) {
         super.encodeRestorableState(with: coder)
-        coder.encode(searchBar.text, forKey: "searchTerm")
+        
+        if tabBarController?.selectedIndex != 0 {
+            coder.encode(nil, forKey: "searchTerm")
+        } else {
+            coder.encode(searchBar.text, forKey: "searchTerm")
+        }
     }
     
     override func decodeRestorableState(with coder: NSCoder) {

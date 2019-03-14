@@ -25,6 +25,7 @@
 		7420CFDD2209D5C700EA713A /* NetworkController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7420CFDC2209D5C700EA713A /* NetworkController.swift */; };
 		7426D9D52237F8280001D6E7 /* LegoPartsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7426D9D42237F8280001D6E7 /* LegoPartsController.swift */; };
 		7426D9D72238079B0001D6E7 /* LegoPart.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7426D9D62238079B0001D6E7 /* LegoPart.swift */; };
+		744C9F05223A9F5100A93EDC /* PartTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 744C9F04223A9F5100A93EDC /* PartTableViewCell.swift */; };
 		7489AE002211CAF50053A586 /* PDFController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7489ADFF2211CAF50053A586 /* PDFController.swift */; };
 /* End PBXBuildFile section */
 
@@ -49,6 +50,7 @@
 		7420CFDC2209D5C700EA713A /* NetworkController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkController.swift; sourceTree = "<group>"; };
 		7426D9D42237F8280001D6E7 /* LegoPartsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegoPartsController.swift; sourceTree = "<group>"; };
 		7426D9D62238079B0001D6E7 /* LegoPart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegoPart.swift; sourceTree = "<group>"; };
+		744C9F04223A9F5100A93EDC /* PartTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PartTableViewCell.swift; sourceTree = "<group>"; };
 		7489ADFF2211CAF50053A586 /* PDFController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDFController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -106,8 +108,6 @@
 			children = (
 				7420CFDC2209D5C700EA713A /* NetworkController.swift */,
 				7416D4D12226E859001F3996 /* FavoritesController.swift */,
-				7420CFDA2208AA6000EA713A /* LegoSetsController.swift */,
-				7426D9D42237F8280001D6E7 /* LegoPartsController.swift */,
 				7420CFD022089A9E00EA713A /* Search Tab */,
 				7416D4CC2226E06B001F3996 /* Favorites Tab */,
 				7420CFD322089FF000EA713A /* Instructions Tab */,
@@ -141,6 +141,7 @@
 			children = (
 				7420CFD62208A36000EA713A /* SearchTableViewController.swift */,
 				7420CFD122089ACA00EA713A /* SearchResultTableViewCell.swift */,
+				7420CFDA2208AA6000EA713A /* LegoSetsController.swift */,
 			);
 			path = "Search Tab";
 			sourceTree = "<group>";
@@ -149,6 +150,8 @@
 			isa = PBXGroup;
 			children = (
 				7420CFCE220892CC00EA713A /* InstructionsViewController.swift */,
+				744C9F04223A9F5100A93EDC /* PartTableViewCell.swift */,
+				7426D9D42237F8280001D6E7 /* LegoPartsController.swift */,
 				7489ADFF2211CAF50053A586 /* PDFController.swift */,
 			);
 			path = "Instructions Tab";
@@ -228,6 +231,7 @@
 				7420CFDD2209D5C700EA713A /* NetworkController.swift in Sources */,
 				7420CFCF220892CC00EA713A /* InstructionsViewController.swift in Sources */,
 				7420CFD92208A3C200EA713A /* LegoSet.swift in Sources */,
+				744C9F05223A9F5100A93EDC /* PartTableViewCell.swift in Sources */,
 				7420CFB822088FD600EA713A /* AppDelegate.swift in Sources */,
 				7416D4D8222EDCDA001F3996 /* TabBarAnimationExtension.swift in Sources */,
 				7416D4D422282926001F3996 /* FavoriteCollectionViewCell.swift in Sources */,

@@ -115,16 +115,17 @@ class FavoritesCollectionViewController: UICollectionViewController, UICollectio
     }
     
     func cellImage(for item: LegoSet, completion: @escaping (UIImage?) -> Void) {
-        
-        URLSession.shared.dataTask(with: URL(string: item.imageURL)!) { (data, response, error) in
-            if let data = data, let image = UIImage(data: data) {
-                completion(image)
-            } else {
-                print("Failed to retrieve image")
-                completion(UIImage(named: "imageError"))
-            }
-            }.resume()
-        
+        if let url = URL(string: item.imageURL) {
+            URLSession.shared.dataTask(with: url) { (data, response, error) in
+                if let data = data, let image = UIImage(data: data) {
+                    completion(image)
+                } else {
+                    completion(UIImage(named: "imageError"))
+                }
+                }.resume()
+        } else {
+            completion(UIImage(named: "imageError"))
+        }
     }
 
     override func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool {

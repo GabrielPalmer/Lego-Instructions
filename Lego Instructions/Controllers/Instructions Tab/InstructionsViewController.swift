@@ -20,14 +20,18 @@ class InstructionsViewController: UIViewController, PDFViewDelegate, UITableView
     
     @IBOutlet weak var headerHeight: NSLayoutConstraint!
     @IBOutlet weak var setNameLabel: UILabel!
-    @IBOutlet weak var infoButton: UIButton!
+    @IBOutlet weak var partsButton: UIButton!
     @IBOutlet weak var tabsStackView: UIStackView!
     @IBOutlet weak var tabsStackViewTrailingSpace: NSLayoutConstraint!
     @IBOutlet weak var tabsStackViewLeadingSpace: NSLayoutConstraint!
     
+    @IBOutlet weak var partsView: UIView!
+    @IBOutlet weak var partsViewWidth: NSLayoutConstraint!
     @IBOutlet weak var partsTableView: UITableView!
-    
+    var partsVisible: Bool = false
+    var partsLoaded: Bool = false
     var parts: [LegoPart]?
+    
     var pdfURLs: [String] = []
     var currentTab: Int = 0
     
@@ -37,6 +41,10 @@ class InstructionsViewController: UIViewController, PDFViewDelegate, UITableView
     
     var legoSet: LegoSet? {
         didSet {
+            
+            partsLoaded = false
+            partsViewWidth.constant = 0
+            
             guard let legoSet = legoSet else { return }
             setNameLabel.text = legoSet.name
             
@@ -52,6 +60,8 @@ class InstructionsViewController: UIViewController, PDFViewDelegate, UITableView
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        partsViewWidth.constant = 0
+        
         partsTableView.dataSource = self
         partsTableView.delegate = self
         
@@ -63,12 +73,12 @@ class InstructionsViewController: UIViewController, PDFViewDelegate, UITableView
         if legoSet == nil {
             activityIndicator.isHidden = true
             setNameLabel.text = "No Build Selected"
-            infoButton.isHidden = true
+            partsButton.isHidden = true
             displayView.bringSubviewToFront(activityView)
             activityView.isHidden = false
             
         } else {
-            infoButton.isHidden = false
+            partsButton.isHidden = false
             activityView.isHidden = true
         }
         
@@ -235,17 +245,44 @@ class InstructionsViewController: UIViewController, PDFViewDelegate, UITableView
         }
     }
     
-    @IBAction func infoButtonTapped(_ sender: Any) {
-        
+    @IBAction func partsButtonTapped(_ sender: Any) {
         if let legoSet = legoSet {
-            LegoPartsController.shared.fetchParts(bricksetLegoSet: legoSet) { (parts) in
-                if let parts = parts {
-                    print(parts)
-                } else {
-                    print("no parts found")
+            
+            partsVisible = !partsVisible
+            
+            if !partsLoaded {
+                self.partsLoaded = true
+                LegoPartsController.shared.fetchParts(bricksetLegoSet: legoSet) { (parts) in
+                    DispatchQueue.main.async {
+                        if let parts = parts {
+                            self.parts = parts
+                            self.partsTableView.reloadData()
+                        } else {
+                            //set info label
+                        }
+                    }
+                    
                 }
-                
             }
+            
+            
+            
+            if partsVisible {
+                UIView.animate(withDuration: 0.3, animations: {
+                    self.partsViewWidth.constant = 150
+                    self.view.layoutIfNeeded()
+                }) { (_) in
+                    self.pdfFitPage()
+                }
+            } else {
+                UIView.animate(withDuration: 0.3, animations: {
+                    self.partsViewWidth.constant = 0
+                    self.view.layoutIfNeeded()
+                }) { (_) in
+                    self.pdfFitPage()
+                }
+            }
+            
         }
         
     }
@@ -258,12 +295,18 @@ class InstructionsViewController: UIViewController, PDFViewDelegate, UITableView
     
     override func encodeRestorableState(with coder: NSCoder) {
         super.encodeRestorableState(with: coder)
-
-        guard let pdfView = pdfView, let document = pdfView.document, let page = pdfView.currentPage else { return }
-        let pageIndex = document.index(for: page)
-        coder.encode(pageIndex, forKey: "pageIndex")
-        coder.encode(currentTab, forKey: "tabIndex")
-        coder.encode(legoSet, forKey: "legoSet")
+        
+        if tabBarController?.selectedIndex != 1 {
+            coder.encode(nil, forKey: "pageIndex")
+            coder.encode(nil, forKey: "tabIndex")
+            coder.encode(nil, forKey: "legoSet")
+        } else {
+            guard let pdfView = pdfView, let document = pdfView.document, let page = pdfView.currentPage else { return }
+            let pageIndex = document.index(for: page)
+            coder.encode(pageIndex, forKey: "pageIndex")
+            coder.encode(currentTab, forKey: "tabIndex")
+            coder.encode(legoSet, forKey: "legoSet")
+        }
     }
 
     override func decodeRestorableState(with coder: NSCoder) {
@@ -281,11 +324,37 @@ class InstructionsViewController: UIViewController, PDFViewDelegate, UITableView
     //===========================================
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        <#code#>
+        return parts?.count ?? 0
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        <#code#>
+        let cell = tableView.dequeueReusableCell(withIdentifier: "partCell", for: indexPath) as! PartTableViewCell
+        let part = parts![indexPath.row]
+        cell.quantityLabel.text = "x\(part.quantity)"
+        
+        cellImage(for: part) { (image) in
+            DispatchQueue.main.async {
+                cell.partImageView.image = image
+            }
+        }
+        
+        return cell
+    }
+    
+    func cellImage(for item: LegoPart, completion: @escaping (UIImage?) -> Void) {
+        
+        if let url = URL(string: item.imageURL) {
+            URLSession.shared.dataTask(with: url) { (data, response, error) in
+                if let data = data, let image = UIImage(data: data) {
+                    completion(image)
+                } else {
+                    completion(UIImage(named: "imageError"))
+                }
+                }.resume()
+        } else {
+            completion(UIImage(named: "imageError"))
+        }
+        
     }
     
 }
