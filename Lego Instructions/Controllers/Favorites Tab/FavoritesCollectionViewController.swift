@@ -22,11 +22,6 @@ class FavoritesCollectionViewController: UICollectionViewController, UICollectio
         }
     }
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        print("FavoritesCollectionViewController did load")
-    }
-    
     @objc func instructionsButtonTapped(_ sender: UIButton) {
         if let tabBar = tabBarController,
             let viewControllers = tabBarController?.viewControllers,

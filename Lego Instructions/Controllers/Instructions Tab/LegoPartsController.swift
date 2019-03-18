@@ -16,41 +16,54 @@ class LegoPartsController {
     
     func fetchParts(bricksetLegoSet: LegoSet, completion: @escaping ([LegoPart]?) -> Void) {
         
-        convertToRebrickableSet(bricksetLegoSet: bricksetLegoSet) { (rebrickableSet) in
+        //attempts find the legoset's id on rebrickable.com in order to use their api methods
+        findRebrickableID(bricksetLegoSet: bricksetLegoSet) { (rebrickableID) in
             
-            let queries: Dictionary<String, String> = ["key" : "6a19ec0901e39bd6506c33786cdaad74"]
+            let apiKey: String = "key=6a19ec0901e39bd6506c33786cdaad74"
             
-            if let rebrickableSet = rebrickableSet, let url = URL(string: "\(self.baseURL)\(rebrickableSet.id)/parts/")?.withQueries(queries) {
-                NetworkController.performNetworkRequest(url: url, completion: { (data, error) in
+            if let rebrickableID = rebrickableID, let startURL = URL(string: "\(self.baseURL)\(rebrickableID)/parts/?\(apiKey)") {
+                
+                var parts: [LegoPart] = []
+                var group = DispatchGroup()
+                
+                func populateParts(with url: URL) {
+                    group.enter()
                     
-                    if let error = error {
-                        print(error.localizedDescription)
-                        completion(nil)
-                        return
-                    }
-                    
-                    if let data = data {
-                        do {
-                            let jsonObjects = try JSONSerialization.jsonObject(with: data, options: .allowFragments)
-                            if let topDictionary = jsonObjects as? Dictionary<String, Any>,
-                                let partDicts = topDictionary["results"] as? [Dictionary<String, Any>] {
-                                
-                                var parts: [LegoPart] = []
-                                
-                                for dict in partDicts {
-                                    if let part = LegoPart(dict: dict) {
-                                        parts.append(part)
+                    NetworkController.performNetworkRequest(url: url, completion: { (data, error) in
+                        
+                        if let error = error {
+                            print(error.localizedDescription)
+                            group.leave()
+                            return
+                        }
+
+                        if let data = data {
+                            do {
+                                let jsonObjects = try JSONSerialization.jsonObject(with: data, options: .allowFragments)
+                                if let topDictionary = jsonObjects as? Dictionary<String, Any>,
+                                    let partDicts = topDictionary["results"] as? [Dictionary<String, Any>] {
+                                    
+                                    parts.append(contentsOf: partDicts.compactMap { LegoPart(dict: $0) })
+                                    
+                                    if let additionalPage = topDictionary["next"] as? String, let nextURL = URL(string: "\(additionalPage)") {
+                                        populateParts(with: nextURL)
                                     }
+                                    
+                                    group.leave()
+                                    return
                                 }
                                 
-                                completion(parts)
-                                return
+                            } catch {
+                                print("Could not decode json")
                             }
-                            
-                        } catch {
-                            print("Could not decode json")
                         }
-                    }
+                    })
+                }
+                
+                populateParts(with: startURL)
+                
+                group.notify(queue: .main, execute: {
+                    completion(parts)
                 })
                 
             } else {
@@ -60,7 +73,7 @@ class LegoPartsController {
         
     }
     
-    fileprivate func convertToRebrickableSet(bricksetLegoSet: LegoSet, completion: @escaping (LegoSet?) -> Void) {
+    fileprivate func findRebrickableID(bricksetLegoSet: LegoSet, completion: @escaping (String?) -> Void) {
         
         let queries: [String : String] = [
             "key" : "6a19ec0901e39bd6506c33786cdaad74",
@@ -102,7 +115,7 @@ class LegoPartsController {
                                     rebrickableLegoSet = closestSet
                                 }
                                 
-                                completion(rebrickableLegoSet)
+                                completion(rebrickableLegoSet.id)
                                 return
                             }
                             

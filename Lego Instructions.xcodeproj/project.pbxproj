@@ -26,6 +26,7 @@
 		7426D9D52237F8280001D6E7 /* LegoPartsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7426D9D42237F8280001D6E7 /* LegoPartsController.swift */; };
 		7426D9D72238079B0001D6E7 /* LegoPart.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7426D9D62238079B0001D6E7 /* LegoPart.swift */; };
 		744C9F05223A9F5100A93EDC /* PartTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 744C9F04223A9F5100A93EDC /* PartTableViewCell.swift */; };
+		744C9F07223C08A600A93EDC /* SlantButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 744C9F06223C08A600A93EDC /* SlantButton.swift */; };
 		7489AE002211CAF50053A586 /* PDFController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7489ADFF2211CAF50053A586 /* PDFController.swift */; };
 /* End PBXBuildFile section */
 
@@ -51,6 +52,7 @@
 		7426D9D42237F8280001D6E7 /* LegoPartsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegoPartsController.swift; sourceTree = "<group>"; };
 		7426D9D62238079B0001D6E7 /* LegoPart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegoPart.swift; sourceTree = "<group>"; };
 		744C9F04223A9F5100A93EDC /* PartTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PartTableViewCell.swift; sourceTree = "<group>"; };
+		744C9F06223C08A600A93EDC /* SlantButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlantButton.swift; sourceTree = "<group>"; };
 		7489ADFF2211CAF50053A586 /* PDFController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDFController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -132,6 +134,7 @@
 				7420CFD42208A07400EA713A /* ViewDesign.swift */,
 				7416D4D5222830F0001F3996 /* ButtonDesign.swift */,
 				7416D4D7222EDCDA001F3996 /* TabBarAnimationExtension.swift */,
+				744C9F06223C08A600A93EDC /* SlantButton.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -244,6 +247,7 @@
 				7416D4D6222830F0001F3996 /* ButtonDesign.swift in Sources */,
 				7489AE002211CAF50053A586 /* PDFController.swift in Sources */,
 				7416D4D22226E859001F3996 /* FavoritesController.swift in Sources */,
+				744C9F07223C08A600A93EDC /* SlantButton.swift in Sources */,
 				7426D9D52237F8280001D6E7 /* LegoPartsController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

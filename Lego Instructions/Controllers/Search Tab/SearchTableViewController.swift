@@ -33,7 +33,11 @@ class SearchTableViewController: UIViewController, UITableViewDelegate, UITableV
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        print("SearchTableViewController did load")
+        tableView.layer.borderWidth = 2
+        tableView.layer.borderColor = UIColor.black.cgColor
+        
+        loadingView.layer.borderWidth = 2
+        loadingView.layer.borderColor = UIColor.black.cgColor
         
         view.bringSubviewToFront(loadingView)
         

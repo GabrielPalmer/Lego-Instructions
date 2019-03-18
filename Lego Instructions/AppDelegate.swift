@@ -24,10 +24,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         FavoritesController.shared.loadFavoriteSets()
         
-        if let tabBar = window?.rootViewController as? UITabBarController,
-            let viewControllers = tabBar.viewControllers,
+        if let tabBarController = window?.rootViewController as? UITabBarController,
+            let viewControllers = tabBarController.viewControllers,
             let SVC = viewControllers[0] as? SearchTableViewController {
-            tabBar.delegate = SVC
+            tabBarController.delegate = SVC
+            
+            tabBarController.tabBar.unselectedItemTintColor = UIColor.darkGray
+            
             print("successfully set tab bar delegate")
         } else {
             print("could not set the tab bar delegate from the view hierchy")

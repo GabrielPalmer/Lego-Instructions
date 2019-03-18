@@ -14,18 +14,21 @@ class InstructionsViewController: UIViewController, PDFViewDelegate, UITableView
     @IBOutlet weak var pdfDisplayView: UIView!
     var pdfView: PDFView?
     @IBOutlet weak var displayView: UIView!
+    @IBOutlet weak var displayViewLeadingSpacing: NSLayoutConstraint!
     @IBOutlet weak var activityView: UIView!
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     @IBOutlet weak var activityLabel: UILabel!
     
+    @IBOutlet weak var headerView: UIView!
     @IBOutlet weak var headerHeight: NSLayoutConstraint!
     @IBOutlet weak var setNameLabel: UILabel!
     @IBOutlet weak var partsButton: UIButton!
     @IBOutlet weak var tabsStackView: UIStackView!
-    @IBOutlet weak var tabsStackViewTrailingSpace: NSLayoutConstraint!
     @IBOutlet weak var tabsStackViewLeadingSpace: NSLayoutConstraint!
+    @IBOutlet weak var tabsStackViewTrailingSpace: NSLayoutConstraint!
     
     @IBOutlet weak var partsView: UIView!
+    @IBOutlet weak var partLabel: UILabel!
     @IBOutlet weak var partsViewWidth: NSLayoutConstraint!
     @IBOutlet weak var partsTableView: UITableView!
     var partsVisible: Bool = false
@@ -44,6 +47,7 @@ class InstructionsViewController: UIViewController, PDFViewDelegate, UITableView
             
             partsLoaded = false
             partsViewWidth.constant = 0
+            displayViewLeadingSpacing.constant = 0
             
             guard let legoSet = legoSet else { return }
             setNameLabel.text = legoSet.name
@@ -61,11 +65,9 @@ class InstructionsViewController: UIViewController, PDFViewDelegate, UITableView
         super.viewDidLoad()
         
         partsViewWidth.constant = 0
-        
         partsTableView.dataSource = self
         partsTableView.delegate = self
         
-        print("InstructionsViewController did load")
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -106,6 +108,16 @@ class InstructionsViewController: UIViewController, PDFViewDelegate, UITableView
         //delete previous tabs if loading from search tab again
         tabsStackView.subviews.forEach({ $0.removeFromSuperview() })
         
+        guard pdfURLs.count > 0 else {
+            activityLabel.text = "Error finding the listed instructions.\nCheck internet connection or find this set on brickset.com"
+            activityIndicator.isHidden = true
+            headerHeight.constant = 76
+            tabsStackView.isHidden = true
+            displayView.bringSubviewToFront(activityView)
+            activityView.isHidden = false
+            return
+        }
+        
         //tab bar won't display if there is only one page
         if pdfURLs.count < 2 {
             tabsStackView.isHidden = true
@@ -116,15 +128,6 @@ class InstructionsViewController: UIViewController, PDFViewDelegate, UITableView
             headerHeight.constant = 136
             tabsStackView.isHidden = false
         }
-        
-        guard pdfURLs.count > 0 else {
-            activityLabel.text = "Could not find any of the instructions listed.\nThis was probably caused by inaccurate info on brickset.com"
-            activityIndicator.isHidden = true
-            displayView.bringSubviewToFront(activityView)
-            activityView.isHidden = false
-            return
-        }
-        
         
         switch pdfURLs.count {
         case 2:
@@ -149,7 +152,11 @@ class InstructionsViewController: UIViewController, PDFViewDelegate, UITableView
         let estimatedButtonWidth = ((screenWidth - 14.0) / CGFloat(integerLiteral: pdfURLs.count)) - tabsStackView.spacing
         
         for tabIndex in 0...pdfURLs.count - 1 {
-            let button = UIButton(frame: CGRect(x: 0, y: 0, width: estimatedButtonWidth, height: 60))
+            
+            let slantLength: CGFloat = 15.0
+            
+            let button = SlantButton(frame: CGRect(x: 0, y: 0, width: estimatedButtonWidth + (2.0 * slantLength), height: 60))
+            button.slantLength = slantLength
             button.addTarget(self, action: #selector(tabButtonTapped(_:)), for: .touchUpInside)
             
             button.tag = tabIndex
@@ -162,7 +169,7 @@ class InstructionsViewController: UIViewController, PDFViewDelegate, UITableView
             tabsStackView.addArrangedSubview(button)
         }
         
-        //restores
+        //restores state
         if let savedTabIndex = savedTabIndex {
             switchToTab(savedTabIndex)
             self.savedTabIndex = nil
@@ -252,34 +259,39 @@ class InstructionsViewController: UIViewController, PDFViewDelegate, UITableView
             
             if !partsLoaded {
                 self.partsLoaded = true
+                parts?.removeAll()
+                partLabel.text = "Loading Parts..."
                 LegoPartsController.shared.fetchParts(bricksetLegoSet: legoSet) { (parts) in
                     DispatchQueue.main.async {
                         if let parts = parts {
                             self.parts = parts
-                            self.partsTableView.reloadData()
+                            self.partLabel.text = "\(parts.count) Total Parts"
                         } else {
-                            //set info label
+                            self.partLabel.text = "Could not find parts for this set."
                         }
+                        
+                        self.partsTableView.reloadData()
                     }
                     
                 }
             }
             
-            
-            
             if partsVisible {
+                
                 UIView.animate(withDuration: 0.3, animations: {
                     self.partsViewWidth.constant = 150
                     self.view.layoutIfNeeded()
-                }) { (_) in
                     self.pdfFitPage()
+                }) { (_) in
+                    self.displayViewLeadingSpacing.constant = 6
                 }
             } else {
                 UIView.animate(withDuration: 0.3, animations: {
                     self.partsViewWidth.constant = 0
                     self.view.layoutIfNeeded()
-                }) { (_) in
                     self.pdfFitPage()
+                }) { (_) in
+                    self.displayViewLeadingSpacing.constant = 0
                 }
             }
             
@@ -290,8 +302,6 @@ class InstructionsViewController: UIViewController, PDFViewDelegate, UITableView
     //===========================================
     // MARK: - State Preservation
     //===========================================
-    
-    //state preservation functions are run after the view loads
     
     override func encodeRestorableState(with coder: NSCoder) {
         super.encodeRestorableState(with: coder)
@@ -341,6 +351,13 @@ class InstructionsViewController: UIViewController, PDFViewDelegate, UITableView
         return cell
     }
     
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: false)
+        if let parts = parts {
+            partLabel.text = parts[indexPath.row].name
+        }
+    }
+    
     func cellImage(for item: LegoPart, completion: @escaping (UIImage?) -> Void) {
         
         if let url = URL(string: item.imageURL) {
@@ -358,4 +375,3 @@ class InstructionsViewController: UIViewController, PDFViewDelegate, UITableView
     }
     
 }
-
