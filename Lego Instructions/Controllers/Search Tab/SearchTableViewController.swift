@@ -8,6 +8,8 @@
 
 import UIKit
 
+//figure out why searching "small" crashes
+
 class SearchTableViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UITabBarControllerDelegate {
 
     @IBOutlet weak var loadingView: UIView!
@@ -86,6 +88,7 @@ class SearchTableViewController: UIViewController, UITableViewDelegate, UITableV
                 
                 self.sortSets()
                 self.tableView.reloadData()
+                self.tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: true)
             }
             
         }
@@ -131,7 +134,6 @@ class SearchTableViewController: UIViewController, UITableViewDelegate, UITableV
         }
         
         tabBarController.animateToTab(toIndex: toIndex)
-        
         return true
     }
     
@@ -191,7 +193,6 @@ class SearchTableViewController: UIViewController, UITableViewDelegate, UITableV
         let sourceRect = CGRect(x: sortButton.bounds.width / 2, y: sortButton.bounds.height, width: 0, height: 0)
         alertController.popoverPresentationController?.sourceView = sortButton
         alertController.popoverPresentationController?.sourceRect = sourceRect
-        
     }
     
     @objc func getInstructionsButtonTapped(_ sender: UIButton) {
@@ -265,10 +266,13 @@ class SearchTableViewController: UIViewController, UITableViewDelegate, UITableV
         cell.themeLabel.text = set.theme
         cell.numberLabel.text = "ID: \(set.id)"
         cell.partsLabel.text = "Pieces: \(set.pieces)"
+        cell.legoSetImageView.image = UIImage(named: "blankImage")
+        cell.loadingIndicator.isHidden = false
         
         cellImage(for: set) { (image) in
             DispatchQueue.main.async {
                 cell.legoSetImageView.image = image
+                cell.loadingIndicator.isHidden = true
             }
         }
         

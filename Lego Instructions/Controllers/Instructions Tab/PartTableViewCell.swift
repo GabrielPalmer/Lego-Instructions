@@ -15,7 +15,6 @@ class PartTableViewCell: UITableViewCell {
     
     override func awakeFromNib() {
         super.awakeFromNib()
-        
         bringSubviewToFront(quantityLabel)
     }
 

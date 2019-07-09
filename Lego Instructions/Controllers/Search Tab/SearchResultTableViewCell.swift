@@ -10,6 +10,7 @@ import UIKit
 
 class SearchResultTableViewCell: UITableViewCell {
 
+    @IBOutlet weak var loadingIndicator: UIActivityIndicatorView!
     @IBOutlet weak var legoSetImageView: UIImageView!
     @IBOutlet weak var nameLabel: UILabel!
     @IBOutlet weak var themeLabel: UILabel!

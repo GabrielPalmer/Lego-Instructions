@@ -54,7 +54,7 @@ class LegoPartsController {
                                 }
                                 
                             } catch {
-                                print("Could not decode json")
+                                print("Could not decode parts json")
                             }
                         }
                     })
@@ -126,13 +126,13 @@ class LegoPartsController {
                     }
                 }
                 
-                print("Data returned was not valid")
+                print("Parts data returned was not valid")
                 completion(nil)
                 return
                 
             }
         } else {
-            print("A url could not be created")
+            print("A parts url could not be created")
             completion(nil)
             return
         }

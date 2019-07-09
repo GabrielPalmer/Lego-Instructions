@@ -31,9 +31,11 @@ class InstructionsViewController: UIViewController, PDFViewDelegate, UITableView
     @IBOutlet weak var partLabel: UILabel!
     @IBOutlet weak var partsViewWidth: NSLayoutConstraint!
     @IBOutlet weak var partsTableView: UITableView!
+    
     var partsVisible: Bool = false
     var partsLoaded: Bool = false
     var parts: [LegoPart]?
+    var selectedPartsCell: UITableViewCell?
     
     var pdfURLs: [String] = []
     var currentTab: Int = 0
@@ -46,7 +48,9 @@ class InstructionsViewController: UIViewController, PDFViewDelegate, UITableView
         didSet {
             
             partsLoaded = false
+            partsVisible = false
             partsViewWidth.constant = 0
+            partsButton.isHidden = true
             displayViewLeadingSpacing.constant = 0
             
             guard let legoSet = legoSet else { return }
@@ -63,24 +67,22 @@ class InstructionsViewController: UIViewController, PDFViewDelegate, UITableView
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
+        setNameLabel.adjustsFontSizeToFitWidth = true
         partsViewWidth.constant = 0
         partsTableView.dataSource = self
         partsTableView.delegate = self
-        
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+
         if legoSet == nil {
             activityIndicator.isHidden = true
             setNameLabel.text = "No Build Selected"
-            partsButton.isHidden = true
             displayView.bringSubviewToFront(activityView)
             activityView.isHidden = false
-            
         } else {
-            partsButton.isHidden = false
             activityView.isHidden = true
         }
         
@@ -97,15 +99,28 @@ class InstructionsViewController: UIViewController, PDFViewDelegate, UITableView
     
     func pdfFitPage() {
         guard let pdf = self.pdfView, let doc = pdf.document, doc.pageCount > 0 else { return }
-        pdf.autoScales = true
         pdf.scaleFactor = pdf.scaleFactorForSizeToFit
         pdf.minScaleFactor = pdf.scaleFactor - (pdf.scaleFactor / 4.0)
         pdf.maxScaleFactor = 3
     }
+
+    func updatePartsButton() {
+        view.layoutIfNeeded()
+        partsButton.isHidden = false
+        headerView.bringSubviewToFront(partsButton)
+
+        if pdfURLs.count < 2 {
+            let y = setNameLabel.frame.origin.y - 15
+            partsButton.frame = CGRect(x: partsButton.frame.origin.x, y: y, width: partsButton.frame.width, height: partsButton.frame.height)
+        } else {
+            let y = tabsStackView.frame.origin.y - 3
+            partsButton.frame = CGRect(x: partsButton.frame.origin.x, y: y, width: partsButton.frame.width, height: partsButton.frame.height)
+        }
+    }
     
     func setUpTabsStackView() {
         
-        //delete previous tabs if loading from search tab again
+        //delete previous tabs
         tabsStackView.subviews.forEach({ $0.removeFromSuperview() })
         
         guard pdfURLs.count > 0 else {
@@ -118,10 +133,12 @@ class InstructionsViewController: UIViewController, PDFViewDelegate, UITableView
             return
         }
         
-        //tab bar won't display if there is only one page
+        //tabs stack view won't display if there is only one page
         if pdfURLs.count < 2 {
+            partsButton.centerYAnchor.constraint(equalTo: setNameLabel.centerYAnchor).isActive = true
             tabsStackView.isHidden = true
             headerHeight.constant = 76
+            updatePartsButton()
             switchToTab(0)
             return
         } else {
@@ -144,7 +161,7 @@ class InstructionsViewController: UIViewController, PDFViewDelegate, UITableView
             tabsStackViewTrailingSpace.constant = 14
         default:
             tabsStackView.spacing = 7
-            tabsStackViewLeadingSpace.constant = 7
+            tabsStackViewLeadingSpace.constant = 14
             tabsStackViewTrailingSpace.constant = 7
         }
         
@@ -152,15 +169,13 @@ class InstructionsViewController: UIViewController, PDFViewDelegate, UITableView
         let estimatedButtonWidth = ((screenWidth - 14.0) / CGFloat(integerLiteral: pdfURLs.count)) - tabsStackView.spacing
         
         for tabIndex in 0...pdfURLs.count - 1 {
-            
             let slantLength: CGFloat = 15.0
-            
             let button = SlantButton(frame: CGRect(x: 0, y: 0, width: estimatedButtonWidth + (2.0 * slantLength), height: 60))
+
             button.slantLength = slantLength
             button.addTarget(self, action: #selector(tabButtonTapped(_:)), for: .touchUpInside)
-            
             button.tag = tabIndex
-            button.titleLabel?.font = UIFont(name: "tabButton", size: 28.0)
+            button.titleLabel?.font = UIFont(name: "tabButton", size: 32.0)
             button.backgroundColor = #colorLiteral(red: 0.8176259082, green: 0.822451515, blue: 0.8597715736, alpha: 1)
             button.titleLabel?.textColor = UIColor.black
             
@@ -168,7 +183,9 @@ class InstructionsViewController: UIViewController, PDFViewDelegate, UITableView
             
             tabsStackView.addArrangedSubview(button)
         }
-        
+
+        updatePartsButton()
+
         //restores state
         if let savedTabIndex = savedTabIndex {
             switchToTab(savedTabIndex)
@@ -176,7 +193,6 @@ class InstructionsViewController: UIViewController, PDFViewDelegate, UITableView
         } else {
             switchToTab(0)
         }
-        
     }
     
     func switchToTab(_ tab: Int) {
@@ -196,6 +212,7 @@ class InstructionsViewController: UIViewController, PDFViewDelegate, UITableView
             let newPDFView = PDFView()
             newPDFView.delegate = self
             newPDFView.translatesAutoresizingMaskIntoConstraints = false
+            newPDFView.autoScales = true
             pdfDisplayView.addSubview(newPDFView)
             
             let bottom = NSLayoutConstraint(item: newPDFView, attribute: .bottom, relatedBy: .equal, toItem: pdfDisplayView, attribute: .bottom, multiplier: 1, constant: 0)
@@ -207,19 +224,17 @@ class InstructionsViewController: UIViewController, PDFViewDelegate, UITableView
             
             pdfView = newPDFView
         }
-        
+
         activityLabel.text = "Loading Instructions"
         activityIndicator.isHidden = false
         displayView.bringSubviewToFront(activityView)
         activityView.isHidden = false
-        
+
+        let url = URL(string: pdfURLs[currentTab])!
         DispatchQueue.global(qos: .utility).async {
-            
-            let url = URL(string: self.pdfURLs[self.currentTab])!
             let document = PDFDocument(url: url)
             
             DispatchQueue.main.async {
-                
                 if let document = document {
                     self.activityView.isHidden = true
                     self.activityIndicator.isHidden = true
@@ -235,7 +250,7 @@ class InstructionsViewController: UIViewController, PDFViewDelegate, UITableView
                 } else {
                     print("Instructions did not exist for part \(self.currentTab) of \(self.setNameLabel.text ?? "")")
                     self.activityIndicator.isHidden = true
-                    self.activityLabel.text = "There was an error loading this document"
+                    self.activityLabel.text = "This document could not be loaded"
                 }
             }
         }
@@ -267,7 +282,7 @@ class InstructionsViewController: UIViewController, PDFViewDelegate, UITableView
                             self.parts = parts
                             self.partLabel.text = "\(parts.count) Total Parts"
                         } else {
-                            self.partLabel.text = "Could not find parts for this set."
+                            self.partLabel.text = "Could not load parts for this set."
                         }
                         
                         self.partsTableView.reloadData()
@@ -277,22 +292,19 @@ class InstructionsViewController: UIViewController, PDFViewDelegate, UITableView
             }
             
             if partsVisible {
-                
                 UIView.animate(withDuration: 0.3, animations: {
                     self.partsViewWidth.constant = 150
+                    self.displayViewLeadingSpacing.constant = 6
                     self.view.layoutIfNeeded()
                     self.pdfFitPage()
-                }) { (_) in
-                    self.displayViewLeadingSpacing.constant = 6
-                }
+                })
             } else {
                 UIView.animate(withDuration: 0.3, animations: {
                     self.partsViewWidth.constant = 0
+                    self.displayViewLeadingSpacing.constant = 0
                     self.view.layoutIfNeeded()
                     self.pdfFitPage()
-                }) { (_) in
-                    self.displayViewLeadingSpacing.constant = 0
-                }
+                })
             }
             
         }
@@ -330,7 +342,7 @@ class InstructionsViewController: UIViewController, PDFViewDelegate, UITableView
     }
     
     //===========================================
-    // MARK: - Parts Table View Delegate
+    // MARK: - Parts Table View
     //===========================================
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -353,6 +365,17 @@ class InstructionsViewController: UIViewController, PDFViewDelegate, UITableView
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: false)
+
+        if let selectedPartsCell = selectedPartsCell {
+            selectedPartsCell.layer.borderWidth = 0
+        }
+
+        if let cell = tableView.cellForRow(at: indexPath) {
+            cell.layer.borderWidth = 3
+            cell.layer.borderColor = #colorLiteral(red: 0.04540421814, green: 0.6656955481, blue: 0.9993106723, alpha: 1)
+            selectedPartsCell = cell
+        }
+
         if let parts = parts {
             partLabel.text = parts[indexPath.row].name
         }
