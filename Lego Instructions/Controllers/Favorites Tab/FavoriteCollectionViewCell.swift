@@ -10,6 +10,7 @@ import UIKit
 
 class FavoriteCollectionViewCell: UICollectionViewCell {
     
+    @IBOutlet weak var loadingIndicator: UIActivityIndicatorView!
     @IBOutlet weak var setImageView: UIImageView!
     @IBOutlet weak var nameLabel: UILabel!
     @IBOutlet weak var idLabel: UILabel!

@@ -50,11 +50,11 @@ class InstructionsViewController: UIViewController, PDFViewDelegate, UITableView
             partsLoaded = false
             partsVisible = false
             partsViewWidth.constant = 0
-            partsButton.isHidden = true
             displayViewLeadingSpacing.constant = 0
             
             guard let legoSet = legoSet else { return }
             setNameLabel.text = legoSet.name
+            partsButton.isHidden = false
             
             PDFController.shared.fetchInstructionURLs(for: legoSet) { (instructions) in
                 DispatchQueue.main.async {
@@ -82,10 +82,8 @@ class InstructionsViewController: UIViewController, PDFViewDelegate, UITableView
             setNameLabel.text = "No Build Selected"
             displayView.bringSubviewToFront(activityView)
             activityView.isHidden = false
-        } else {
-            activityView.isHidden = true
+            partsButton.isHidden = true
         }
-        
     }
     
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
@@ -98,24 +96,11 @@ class InstructionsViewController: UIViewController, PDFViewDelegate, UITableView
     }
     
     func pdfFitPage() {
+        self.view.layoutIfNeeded()
         guard let pdf = self.pdfView, let doc = pdf.document, doc.pageCount > 0 else { return }
         pdf.scaleFactor = pdf.scaleFactorForSizeToFit
         pdf.minScaleFactor = pdf.scaleFactor - (pdf.scaleFactor / 4.0)
         pdf.maxScaleFactor = 3
-    }
-
-    func updatePartsButton() {
-        view.layoutIfNeeded()
-        partsButton.isHidden = false
-        headerView.bringSubviewToFront(partsButton)
-
-        if pdfURLs.count < 2 {
-            let y = setNameLabel.frame.origin.y - 15
-            partsButton.frame = CGRect(x: partsButton.frame.origin.x, y: y, width: partsButton.frame.width, height: partsButton.frame.height)
-        } else {
-            let y = tabsStackView.frame.origin.y - 3
-            partsButton.frame = CGRect(x: partsButton.frame.origin.x, y: y, width: partsButton.frame.width, height: partsButton.frame.height)
-        }
     }
     
     func setUpTabsStackView() {
@@ -138,7 +123,6 @@ class InstructionsViewController: UIViewController, PDFViewDelegate, UITableView
             partsButton.centerYAnchor.constraint(equalTo: setNameLabel.centerYAnchor).isActive = true
             tabsStackView.isHidden = true
             headerHeight.constant = 76
-            updatePartsButton()
             switchToTab(0)
             return
         } else {
@@ -162,7 +146,7 @@ class InstructionsViewController: UIViewController, PDFViewDelegate, UITableView
         default:
             tabsStackView.spacing = 7
             tabsStackViewLeadingSpace.constant = 14
-            tabsStackViewTrailingSpace.constant = 7
+            tabsStackViewTrailingSpace.constant = 14
         }
         
         let screenWidth = view.bounds.width
@@ -183,8 +167,6 @@ class InstructionsViewController: UIViewController, PDFViewDelegate, UITableView
             
             tabsStackView.addArrangedSubview(button)
         }
-
-        updatePartsButton()
 
         //restores state
         if let savedTabIndex = savedTabIndex {
@@ -287,28 +269,21 @@ class InstructionsViewController: UIViewController, PDFViewDelegate, UITableView
                         
                         self.partsTableView.reloadData()
                     }
-                    
                 }
             }
-            
+
             if partsVisible {
-                UIView.animate(withDuration: 0.3, animations: {
-                    self.partsViewWidth.constant = 150
-                    self.displayViewLeadingSpacing.constant = 6
-                    self.view.layoutIfNeeded()
-                    self.pdfFitPage()
-                })
-            } else {
-                UIView.animate(withDuration: 0.3, animations: {
-                    self.partsViewWidth.constant = 0
-                    self.displayViewLeadingSpacing.constant = 0
-                    self.view.layoutIfNeeded()
-                    self.pdfFitPage()
-                })
+                print(pdfView?.scaleFactor ?? "no scale factor")
             }
-            
+
+            UIView.animate(withDuration: 0.3, animations: {
+                self.partsViewWidth.constant = self.partsVisible ? 150 : 0
+                self.displayViewLeadingSpacing.constant = self.partsVisible ? 6 : 0
+                self.pdfFitPage()
+            }) { (_) in
+                print(self.pdfView?.scaleFactor ?? "no scale factor")
+            }
         }
-        
     }
     
     //===========================================
@@ -377,7 +352,18 @@ class InstructionsViewController: UIViewController, PDFViewDelegate, UITableView
         }
 
         if let parts = parts {
+            //updates the parts label
+            //then recalculates the table views scroll position so the label doesn't move it
+            let previousHeight = partLabel.frame.height
+            let previousOffset = partsTableView.contentOffset.y
             partLabel.text = parts[indexPath.row].name
+            view.layoutIfNeeded()
+            let newHeight = partLabel.frame.height
+
+            guard previousHeight != newHeight else { return }
+            let difference = previousHeight - newHeight
+            let newOffset = previousOffset - difference
+            partsTableView.contentOffset.y = newOffset
         }
     }
     

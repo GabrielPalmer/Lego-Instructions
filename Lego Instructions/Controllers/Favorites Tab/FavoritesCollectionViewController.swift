@@ -88,21 +88,22 @@ class FavoritesCollectionViewController: UICollectionViewController, UICollectio
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "favoriteCell", for: indexPath) as! FavoriteCollectionViewCell
         let set = favoriteSets[indexPath.row]
+
         cell.idLabel.text = "#\(set.id)"
         cell.nameLabel.text = set.name
-        
         cell.instructionsButton.tag = indexPath.row
         cell.removeButton.tag = indexPath.row
-        
         cell.instructionsButton.addTarget(self, action: #selector(instructionsButtonTapped(_:)), for: .touchUpInside)
         cell.removeButton.addTarget(self, action: #selector(removeButtonTapped(_:)), for: .touchUpInside)
-        
         cell.layer.cornerRadius = 10
         cell.nameLabel.adjustsFontSizeToFitWidth = true
+        cell.setImageView.image = UIImage(named: "blankImage")
+        cell.loadingIndicator.isHidden = false
         
         cellImage(for: set) { (image) in
             DispatchQueue.main.async {
                 cell.setImageView.image = image
+                cell.loadingIndicator.isHidden = true
             }
         }
         

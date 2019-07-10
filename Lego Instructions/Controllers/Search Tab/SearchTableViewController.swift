@@ -289,7 +289,6 @@ class SearchTableViewController: UIViewController, UITableViewDelegate, UITableV
                 completion(UIImage(named: "imageError"))
             }
             }.resume()
-        
     }
     
     func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath) -> IndexPath? {
