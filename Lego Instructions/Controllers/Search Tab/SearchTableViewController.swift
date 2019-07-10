@@ -117,9 +117,9 @@ class SearchTableViewController: UIViewController, UITableViewDelegate, UITableV
             
             guard resultsLegoSets.count != 0 else { return }
             
-            tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: true)
             sortSets()
             tableView.reloadData()
+            tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: true)
         }
     }
     

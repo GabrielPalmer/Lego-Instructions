@@ -16,7 +16,7 @@ class SlantButton: UIButton {
             updatePath()
         }
     }
-
+    
     private let shapeLayer: CAShapeLayer = {
         let shapeLayer = CAShapeLayer()
         shapeLayer.lineWidth = 0

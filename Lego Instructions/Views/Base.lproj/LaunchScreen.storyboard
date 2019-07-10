@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14490.70" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="01J-lp-oVM">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="01J-lp-oVM">
     <device id="ipad11_0rounded" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14490.49"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14460.20"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -17,13 +17,69 @@
                     <view key="view" contentMode="scaleToFill" id="Ze5-6b-2t3">
                         <rect key="frame" x="0.0" y="0.0" width="834" height="1194"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ZjY-C2-Fz0">
+                                <rect key="frame" x="267" y="447" width="300" height="300"/>
+                                <subviews>
+                                    <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="rebrickableLogo" translatesAutoresizingMaskIntoConstraints="NO" id="L2V-7n-4Ty">
+                                        <rect key="frame" x="0.0" y="180" width="300" height="90"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="90" id="mZX-sD-7h4"/>
+                                        </constraints>
+                                    </imageView>
+                                    <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="launchLabel1" translatesAutoresizingMaskIntoConstraints="NO" id="0b0-N7-jqb">
+                                        <rect key="frame" x="78" y="0.0" width="144" height="30"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="30" id="1ab-SM-Mku"/>
+                                        </constraints>
+                                    </imageView>
+                                    <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="bricksetLogo" translatesAutoresizingMaskIntoConstraints="NO" id="FDW-Gm-QRP">
+                                        <rect key="frame" x="0.0" y="40" width="300" height="90"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="90" id="ZHl-38-r3Q"/>
+                                        </constraints>
+                                    </imageView>
+                                </subviews>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstItem="0b0-N7-jqb" firstAttribute="top" secondItem="ZjY-C2-Fz0" secondAttribute="top" id="5ni-Dp-raJ"/>
+                                    <constraint firstItem="FDW-Gm-QRP" firstAttribute="leading" secondItem="ZjY-C2-Fz0" secondAttribute="leading" id="E7C-oO-N4f"/>
+                                    <constraint firstItem="L2V-7n-4Ty" firstAttribute="centerX" secondItem="ZjY-C2-Fz0" secondAttribute="centerX" id="Mww-4y-sXV"/>
+                                    <constraint firstAttribute="trailing" secondItem="FDW-Gm-QRP" secondAttribute="trailing" id="QDf-bx-EtG"/>
+                                    <constraint firstAttribute="width" secondItem="ZjY-C2-Fz0" secondAttribute="height" id="Ukz-zV-xQx"/>
+                                    <constraint firstAttribute="width" constant="300" id="g6X-Xw-aWy"/>
+                                    <constraint firstItem="0b0-N7-jqb" firstAttribute="centerX" secondItem="ZjY-C2-Fz0" secondAttribute="centerX" id="ge6-0V-Acd"/>
+                                    <constraint firstAttribute="trailing" secondItem="L2V-7n-4Ty" secondAttribute="trailing" id="lxp-ZM-MC2"/>
+                                    <constraint firstItem="FDW-Gm-QRP" firstAttribute="top" secondItem="0b0-N7-jqb" secondAttribute="bottom" constant="10" id="u7D-gi-T3A"/>
+                                </constraints>
+                            </view>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="launchLabel2" translatesAutoresizingMaskIntoConstraints="NO" id="YfB-hn-CGF">
+                                <rect key="frame" x="394" y="587" width="46" height="30"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="30" id="5Nz-pk-2cw"/>
+                                </constraints>
+                            </imageView>
+                        </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstItem="YfB-hn-CGF" firstAttribute="centerX" secondItem="Ze5-6b-2t3" secondAttribute="centerX" id="2xs-Js-LxR"/>
+                            <constraint firstItem="L2V-7n-4Ty" firstAttribute="top" secondItem="YfB-hn-CGF" secondAttribute="bottom" constant="10" id="AwC-RH-FDK"/>
+                            <constraint firstItem="ZjY-C2-Fz0" firstAttribute="centerX" secondItem="Ze5-6b-2t3" secondAttribute="centerX" id="ILf-sY-gAd"/>
+                            <constraint firstItem="ZjY-C2-Fz0" firstAttribute="centerY" secondItem="Ze5-6b-2t3" secondAttribute="centerY" id="J4E-nW-KDt"/>
+                            <constraint firstItem="YfB-hn-CGF" firstAttribute="top" secondItem="FDW-Gm-QRP" secondAttribute="bottom" constant="10" id="ikA-3Q-5XT"/>
+                        </constraints>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="iYj-Kq-Ea1" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="53" y="375"/>
+            <point key="canvasLocation" x="52.517985611510795" y="374.8743718592965"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="bricksetLogo" width="217" height="48"/>
+        <image name="launchLabel1" width="144" height="27"/>
+        <image name="launchLabel2" width="46" height="21"/>
+        <image name="rebrickableLogo" width="166" height="33"/>
+    </resources>
 </document>

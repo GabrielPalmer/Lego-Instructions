@@ -33,10 +33,7 @@ class PDFController: NSObject, XMLParserDelegate {
             xmlParser?.delegate = self
             xmlParser?.parse()
             
-            //example urlDescription: "BI 3005/60 , 60031 V29 1/2"
-            //do tests with "bank" #8461
-            
-            //pdfURLs will have duplicates removed but keeps a copy of the original
+            //pdfURLs will have any duplicates removed but keep a copy of the original
             self.allURLs.append(contentsOf: self.pdfURLs)
             
             //if all urls had the description "{No longer listed at LEGO.com}" they won't be listed in pdfURLs
@@ -88,6 +85,7 @@ class PDFController: NSObject, XMLParserDelegate {
                 
                 var shouldDeleteDuplicates = false
                 var pdfIndexesToDelete: [Int] = []
+                var pageOrder: [Int] = []
                 
                 for instructionsIndex in 0...instructionsAmount - 1 {
                     shouldDeleteDuplicates = false
@@ -101,6 +99,7 @@ class PDFController: NSObject, XMLParserDelegate {
                                 pdfIndexesToDelete.append(descriptionIndex)
                             } else {
                                 shouldDeleteDuplicates = true
+                                pageOrder.append(descriptionIndex)
                             }
                         }
                         
@@ -108,10 +107,17 @@ class PDFController: NSObject, XMLParserDelegate {
                 }
                 
                 self.pdfURLs.remove(at: pdfIndexesToDelete)
-
+                
+                //sorts the urls to be in the correct order of instruction pages
+                if self.pdfURLs.count == pageOrder.count {
+                    let offsets = pageOrder.enumerated().sorted { $0.element < $1.element }.map { $0.offset }
+                    self.pdfURLs = offsets.map { self.pdfURLs[$0] }
+                }
+                
             }
             
             completion(self.pdfURLs)
+            return
         }
     }
     
@@ -131,7 +137,7 @@ class PDFController: NSObject, XMLParserDelegate {
         } else if currentElement == "description" && !valueWasSet {
             valueWasSet = true
             
-            //this description is always associated with duplicate pdfs
+            //this description is almost always associated with duplicate pdfs
             if string == "{No longer listed at LEGO.com}" {
                 allURLs.append(pdfURLs.removeLast())
                 if let legoSet = legoSet, let instructionsCount = Int(legoSet.instructionsCount) {
@@ -157,6 +163,7 @@ extension Array {
     mutating func remove(at indexes: [Int]) {
         var mutableIndexes = indexes
         
+        //stops index out of range crash by checking for duplicates
         for _ in 0...indexes.count - 1 {
             let value = mutableIndexes.removeFirst()
             if mutableIndexes.contains(value) {
