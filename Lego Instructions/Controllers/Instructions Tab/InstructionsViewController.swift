@@ -29,6 +29,7 @@ class InstructionsViewController: UIViewController, PDFViewDelegate, UITableView
     
     @IBOutlet weak var partsView: UIView!
     @IBOutlet weak var partLabel: UILabel!
+    @IBOutlet weak var partsViewLeadingSpace: NSLayoutConstraint!
     @IBOutlet weak var partsViewWidth: NSLayoutConstraint!
     @IBOutlet weak var partsTableView: UITableView!
     
@@ -120,7 +121,6 @@ class InstructionsViewController: UIViewController, PDFViewDelegate, UITableView
         
         //tabs stack view won't display if there is only one page
         if pdfURLs.count < 2 {
-            partsButton.centerYAnchor.constraint(equalTo: setNameLabel.centerYAnchor).isActive = true
             tabsStackView.isHidden = true
             headerHeight.constant = 76
             switchToTab(0)
@@ -159,7 +159,7 @@ class InstructionsViewController: UIViewController, PDFViewDelegate, UITableView
             button.slantLength = slantLength
             button.addTarget(self, action: #selector(tabButtonTapped(_:)), for: .touchUpInside)
             button.tag = tabIndex
-            button.titleLabel?.font = UIFont(name: "tabButton", size: 32.0)
+            button.titleLabel?.font = UIFont(name: "Helvetica Neue", size: 22.0)
             button.backgroundColor = #colorLiteral(red: 0.8176259082, green: 0.822451515, blue: 0.8597715736, alpha: 1)
             button.titleLabel?.textColor = UIColor.black
             
@@ -264,7 +264,7 @@ class InstructionsViewController: UIViewController, PDFViewDelegate, UITableView
                             self.parts = parts
                             self.partLabel.text = "\(parts.count) Total Parts"
                         } else {
-                            self.partLabel.text = "Could not load parts for this set."
+                            self.partLabel.text = "Could not load parts for this set"
                         }
                         
                         self.partsTableView.reloadData()
@@ -272,16 +272,32 @@ class InstructionsViewController: UIViewController, PDFViewDelegate, UITableView
                 }
             }
 
-            if partsVisible {
-                print(pdfView?.scaleFactor ?? "no scale factor")
-            }
+//            UIView.animate(withDuration: 0.3) {
+//                self.partsViewWidth.constant = self.partsVisible ? 150 : 0
+//                self.view.layoutIfNeeded()
+//                self.pdfFitPage()
+//            }
+
+
+            // what the janky animations make it be
+            view.layoutIfNeeded()
 
             UIView.animate(withDuration: 0.3, animations: {
-                self.partsViewWidth.constant = self.partsVisible ? 150 : 0
-                self.displayViewLeadingSpacing.constant = self.partsVisible ? 6 : 0
-                self.pdfFitPage()
-            }) { (_) in
-                print(self.pdfView?.scaleFactor ?? "no scale factor")
+                if self.partsVisible {
+                    let scaleFactor = (self.pdfDisplayView.frame.width - 150) / self.pdfDisplayView.frame.width
+                    self.pdfView?.scaleFactor = scaleFactor
+                    self.view.layoutIfNeeded()
+                } else {
+                    self.partsViewWidth.constant = 0
+                    self.pdfFitPage()
+                }
+            }) {(_) in
+                if self.partsVisible {
+                    self.partsViewWidth.constant = 150
+                    UIView.animate(withDuration: 0.3, animations: {
+                        self.view.layoutIfNeeded()
+                    })
+                }
             }
         }
     }
@@ -327,8 +343,15 @@ class InstructionsViewController: UIViewController, PDFViewDelegate, UITableView
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "partCell", for: indexPath) as! PartTableViewCell
         let part = parts![indexPath.row]
-        cell.quantityLabel.text = "x\(part.quantity)"
-        
+        if part.quantity == 0 {
+            cell.quantityLabel.text = "%"
+        } else {
+            cell.quantityLabel.text = "x\(part.quantity)"
+        }
+
+        //deletes the quantity label for some reason
+        cell.partImageView.image = UIImage(named: "blankImage")
+
         cellImage(for: part) { (image) in
             DispatchQueue.main.async {
                 cell.partImageView.image = image
@@ -380,7 +403,6 @@ class InstructionsViewController: UIViewController, PDFViewDelegate, UITableView
         } else {
             completion(UIImage(named: "imageError"))
         }
-        
     }
     
 }

@@ -60,7 +60,7 @@ class SearchTableViewController: UIViewController, UITableViewDelegate, UITableV
     func search(searchTerm: String) {
         
         let queries: Dictionary<String, String> = [
-            "apiKey" : "B5sG-5uAN-22mW",
+            "apiKey" : "ztg4-tiyB-qqaK",
             "query" : searchTerm,
             "orderBy" : "",
             "userHash" : "",
@@ -88,7 +88,10 @@ class SearchTableViewController: UIViewController, UITableViewDelegate, UITableV
                 
                 self.sortSets()
                 self.tableView.reloadData()
-                self.tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: true)
+                self.view.layoutIfNeeded()
+                if legoSets.count > 0 {
+                    self.tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: true)
+                }
             }
             
         }
